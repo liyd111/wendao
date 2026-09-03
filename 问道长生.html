@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>问道长生 · 修仙文字游戏</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='24' y='8' width='16' height='6' rx='2' fill='%238a6d3b'/%3E%3Cellipse cx='32' cy='34' rx='16' ry='20' fill='%23c05f55'/%3E%3Cellipse cx='32' cy='34' rx='8' ry='14' fill='%23e8b25c'/%3E%3Crect x='24' y='52' width='16' height='5' rx='2' fill='%238a6d3b'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#FBF8F1; --paper2:#F5EFE1; --ink:#3F3A34; --ink2:#8C8578; --ink3:#2B2620;
+  --gold:#C9A45C; --jade:#6FA698; --red:#C05F55; --blue:#5E8FAE; --purple:#8B6FA8; --pink:#D88FA5;
+  --barbg:#E8E4DC; --hair:#E3D6B8; --line:rgba(201,164,92,.35);
+  --font-kai:"Kaiti SC","STKaiti","KaiTi","楷体","Noto Serif SC",serif;
+  --font-song:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun","宋体",serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;color:var(--ink);font-family:var(--font-song);font-size:16px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+button{font-family:inherit}
+.hidden{display:none!important}
+
+/* ---------- 背景 ---------- */
+#bgArt{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(201,164,92,.14), transparent 60%),
+    radial-gradient(900px 420px at 8% 108%, rgba(111,166,152,.16), transparent 62%),
+    linear-gradient(#F8F3E8,#F1EBDC);
+}
+#bgArt .mountains{position:absolute;bottom:0;left:0;width:100%;height:34vh;min-height:180px}
+.motes span{position:absolute;bottom:-30px;width:6px;height:6px;border-radius:50%;
+  background:radial-gradient(circle,rgba(201,164,92,.85),transparent 70%);
+  animation:rise linear infinite;opacity:0;
+}
+@keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.7}100%{transform:translateY(-108vh);opacity:0}}
+
+/* ---------- 灯笼 ---------- */
+.lantern{width:52px;height:72px;border-radius:46%/40%;position:relative;margin:6px auto 2px;
+  background:radial-gradient(circle at 50% 32%, #efc27a, #d68a4e 55%, #c05f55 100%);
+  box-shadow:0 0 46px 14px rgba(224,150,60,.38), inset 0 -8px 18px rgba(120,40,30,.35);
+  animation:sway 4.5s ease-in-out infinite;
+}
+.lantern::before{content:"";position:absolute;top:-15px;left:50%;transform:translateX(-50%);
+  width:2px;height:15px;background:#8a6d3b}
+.lantern::after{content:"";position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);
+  width:3px;height:17px;background:#8a6d3b;border-radius:2px}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.candle{width:10px;height:14px;border-radius:50%/60% 60% 40% 40%;display:inline-block;vertical-align:-2px;
+  background:radial-gradient(circle at 50% 70%,#f6d365,#e8833a 70%,#c05f55);
+  box-shadow:0 0 12px 3px rgba(230,150,60,.5);animation:flick 1s infinite alternate}
+@keyframes flick{from{transform:scale(1) rotate(-2deg)}to{transform:scale(1.15) rotate(2deg)}}
+
+/* ---------- 居中页（设置/标题） ---------- */
+.screen{min-height:100dvh}
+.center-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:36px 16px;gap:10px}
+.game-title{font-family:var(--font-kai);font-size:clamp(44px,9vw,80px);letter-spacing:.32em;
+  margin:10px 0 0;font-weight:700;color:#4a3b28;text-shadow:0 2px 14px rgba(201,164,92,.4);
+  text-indent:.32em}
+.subtitle{color:var(--ink2);letter-spacing:.22em;font-size:13.5px}
+.title-menu{display:flex;flex-direction:column;gap:12px;margin-top:22px;width:min(360px,92vw)}
+.title-btn{font-family:var(--font-kai);font-size:18px;letter-spacing:.14em;color:#5a4a30;
+  background:rgba(251,248,241,.9);border:1.5px solid var(--gold);border-radius:12px;
+  padding:13px 18px;cursor:pointer;transition:all .18s;box-shadow:0 3px 12px rgba(120,90,40,.12)}
+.title-btn:hover{transform:translateX(5px);box-shadow:0 6px 18px rgba(160,120,50,.22);
+  border-color:#a87e2e;background:#fffdf6}
+.title-btn.resume{border-color:var(--jade)}
+.title-note{color:var(--ink2);font-size:12.5px;margin-top:16px;letter-spacing:.08em;text-align:center;line-height:2}
+.credit{color:#b09a6c;font-size:12px;letter-spacing:.3em;margin-top:6px}
+
+/* ---------- 表单 ---------- */
+.setup-card{width:min(600px,94vw);background:var(--paper);border:1.5px solid var(--jade);
+  border-radius:14px;padding:20px 22px;box-shadow:0 8px 30px rgba(90,70,30,.14);margin-top:14px}
+.setup-card h2{font-family:var(--font-kai);margin:2px 0 6px;font-size:20px;letter-spacing:.1em;color:#3d5a50}
+.prov-wrap{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.prov-chip{font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid #cbb98d;
+  background:#fffdf6;color:#6b5a3a;cursor:pointer;transition:all .15s}
+.prov-chip:hover{border-color:var(--gold)}
+.prov-chip.on{background:var(--jade);border-color:var(--jade);color:#fff}
+.fld{margin:10px 0}
+.fld label{display:block;font-size:13px;color:#7a6a48;margin-bottom:4px;letter-spacing:.06em}
+.inp{width:100%;padding:9px 12px;border:1.2px solid #d8c9a3;border-radius:9px;background:#fffdf8;
+  color:var(--ink);font-size:15px;font-family:inherit;outline:none;transition:border .15s}
+.inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,164,92,.18)}
+textarea.inp{resize:vertical;line-height:1.6}
+.setup-status{font-size:13px;color:#7a6a48;min-height:1.4em;margin-top:6px;word-break:break-all}
+.btn-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+.primary-btn{background:linear-gradient(135deg,#7cb3a4,#5f9486);color:#fff;border:none;
+  padding:10px 22px;border-radius:10px;font-size:15px;letter-spacing:.1em;cursor:pointer;
+  box-shadow:0 4px 12px rgba(95,148,134,.35);transition:all .15s;font-family:var(--font-kai)}
+.primary-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(95,148,134,.45)}
+.primary-btn:disabled{opacity:.6;cursor:default;transform:none}
+.ghost-btn{background:transparent;border:1.2px solid #cbb98d;color:#6b5a3a;padding:9px 18px;
+  border-radius:10px;font-size:14px;cursor:pointer;transition:all .15s}
+.ghost-btn:hover{background:#f1e7cf;border-color:var(--gold)}
+
+/* ---------- 游戏页框架 ---------- */
+#gameScreen{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+#topBar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  height:54px;padding:0 14px;background:rgba(251,248,241,.88);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);z-index:30}
+.tb-left{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-logo{font-family:var(--font-kai);font-size:19px;letter-spacing:.2em;color:#4a3b28;white-space:nowrap}
+.tb-badge{font-size:12px;color:#fff;background:var(--jade);padding:2px 10px;border-radius:999px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:34vw}
+.tb-turn{font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.tb-right{display:flex;gap:8px;align-items:center}
+.tb-btn{border:1px solid #cbb98d;background:transparent;color:#6b5a3a;font-size:12.5px;
+  padding:4px 11px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.tb-btn:hover{background:#f1e7cf;border-color:var(--gold)}
+#gameLayout{flex:1;display:flex;min-height:0}
+#storyWrap{flex:1;overflow-y:auto;scroll-behavior:smooth}
+#storyArea{max-width:800px;margin:0 auto;padding:20px 16px 46px}
+#sidePanel{flex:none;width:336px;overflow-y:auto;border-left:1px solid var(--line);
+  background:rgba(248,243,230,.75);padding:14px}
+.side-title{font-family:var(--font-kai);font-size:15px;color:#5a4a30;letter-spacing:.12em;
+  margin:14px 0 8px;border-left:3px solid var(--gold);padding-left:9px}
+.side-note{color:var(--ink2);font-size:12.5px;line-height:1.9;margin-top:8px}
+#sideOverlay{display:none}
+
+/* ---------- 输入区 ---------- */
+#inputBar{flex:none;background:linear-gradient(rgba(251,248,241,.94),#F6F0E1);
+  border-top:1px solid var(--line);padding:9px 14px calc(9px + env(safe-area-inset-bottom))}
+#inputBar .inner{max-width:800px;margin:0 auto}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:12.5px;padding:3px 11px;border-radius:999px;border:1px solid #cbb98d;
+  background:#fffdf6;color:#6b5a3a;cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--gold);background:#f6edd7}
+.chip.danger{border-color:#d8a49a;color:#a04b3f}
+.chip:disabled{opacity:.5;cursor:default}
+.input-row{display:flex;gap:10px;align-items:flex-end;margin-top:9px}
+#inputBox{flex:1;resize:none;border:1.2px solid #d8c9a3;border-radius:12px;background:#fffdf8;
+  padding:10px 13px;font-size:15.5px;font-family:inherit;line-height:1.6;color:var(--ink);
+  outline:none;max-height:140px;transition:border .15s}
+#inputBox:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,164,92,.16)}
+#sendBtn{flex:none;font-family:var(--font-kai);font-size:16px;letter-spacing:.14em;color:#fff;
+  background:linear-gradient(135deg,#7cb3a4,#5f9486);border:none;border-radius:12px;
+  padding:11px 22px;cursor:pointer;box-shadow:0 4px 12px rgba(95,148,134,.35);transition:all .15s}
+#sendBtn:hover{transform:translateY(-1px)}
+#sendBtn:disabled{opacity:.6;cursor:default;transform:none}
+
+/* ---------- 回合 ---------- */
+.turn{margin:12px 0 26px;padding:15px 17px;background:rgba(255,253,248,.6);
+  border:1px solid rgba(201,164,92,.28);border-radius:15px;
+  box-shadow:0 3px 14px rgba(110,85,40,.07);animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.turn.past{animation:none;opacity:.96}
+.turn-date{font-family:var(--font-kai);color:#8a6d3b;letter-spacing:.1em;font-size:15px;
+  border-left:3px solid var(--gold);padding-left:10px;margin-bottom:10px}
+.narr{text-indent:2em;margin:9px 0;color:var(--ink)}
+.roll{font-size:13.5px;color:#8a6d3b;margin:7px 0;font-family:var(--font-kai)}
+
+/* ---------- 面板 ---------- */
+.xpanel{background:var(--paper);border:1.5px solid var(--pc,#8C8578);border-radius:11px;
+  padding:13px 15px;margin:11px 0;box-shadow:0 3px 12px rgba(80,60,25,.09);position:relative}
+.xpanel::before{content:"";position:absolute;inset:5px;border:1px solid #d8c9a3;border-radius:7px;
+  pointer-events:none;opacity:.45;border-color:color-mix(in srgb,var(--pc,#8C8578) 32%,transparent)}
+.xp-title{display:inline-block;background:var(--pc,#8C8578);color:#fff;font-weight:700;
+  font-family:var(--font-kai);padding:3px 15px;border-radius:7px;letter-spacing:.14em;
+  margin-bottom:8px;font-size:15px;box-shadow:0 2px 6px color-mix(in srgb,var(--pc,#8C8578) 35%,transparent)}
+.xp-row{margin:6px 0;line-height:1.8;color:var(--ink)}
+.xp-row.strong,.xp-row.strong *{font-weight:700;color:var(--ink3)}
+.xp-row.alert{color:#a03b2f}
+.xp-note{color:var(--ink2);font-size:13px;line-height:1.8;margin:5px 0}
+.xp-sep{border:none;border-top:1px dashed var(--gold);opacity:.55;margin:10px 0}
+.kvrow{display:flex;gap:10px;margin:6px 0;align-items:baseline}
+.kvrow.wrap{flex-wrap:wrap}
+.kv-k{flex:none;font-size:13px;color:var(--ink2);letter-spacing:.08em;min-width:3.2em}
+.kv-v{color:var(--ink);font-size:14.5px}
+.els{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.elchip{display:inline-block;min-width:1.75em;text-align:center;color:#fff;border-radius:5px;
+  padding:1px 6px;font-size:13px;letter-spacing:.05em;box-shadow:inset 0 -1px 2px rgba(0,0,0,.18)}
+.bar{display:flex;align-items:center;gap:9px;margin:7px 0}
+.bar-label{flex:none;width:5.2em;font-size:13.5px;color:var(--ink2);letter-spacing:.05em}
+.bar-track{flex:1;height:10px;background:var(--barbg);border-radius:5px;overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+.bar-fill{display:block;height:100%;border-radius:5px;transition:width .6s ease;
+  box-shadow:inset 0 -2px 3px rgba(0,0,0,.15)}
+.bar-val{flex:none;min-width:5em;text-align:right;font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.favwrap{display:flex;flex-wrap:wrap;gap:6px}
+.fav{font-size:12.5px;padding:1px 9px;border-radius:999px;border:1px solid var(--fc,#8C8578);
+  color:var(--fc,#8C8578);background:color-mix(in srgb,var(--fc,#8C8578) 8%,transparent);white-space:nowrap}
+.statuscard{font-size:15px}
+
+/* ---------- 选项 ---------- */
+.opts{margin:12px 0 4px}
+.opt-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font-size:15px;
+  background:var(--paper);border:1.5px solid #cbb98d;border-radius:11px;padding:10px 13px;
+  margin:8px 0;cursor:pointer;color:var(--ink3);transition:all .16s;line-height:1.55}
+.opt-btn:hover:not(:disabled){transform:translateX(5px);background:#fffdf6;
+  box-shadow:0 4px 14px rgba(150,115,50,.16);border-color:var(--gold)}
+.opt-btn:disabled{cursor:default;opacity:.55}
+.opt-btn.chosen{opacity:1;border-width:2px;background:#f4ead0;box-shadow:0 3px 10px rgba(160,120,50,.18)}
+.opt-letter{flex:none;width:27px;height:27px;border-radius:50%;border:1.5px solid var(--lc,#6FA698);
+  color:var(--lc,#6FA698);font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px}
+.opt-btn.chosen .opt-letter{background:var(--lc,#6FA698);color:#fff}
+.opt-tag{flex:none;font-size:12px;color:#fff;padding:1px 9px;border-radius:5px;letter-spacing:.1em}
+.opt-text{flex:1}
+.freehint{text-align:center;color:var(--ink2);font-size:12.5px;margin-top:10px;letter-spacing:.1em}
+
+/* ---------- 玩家消息 / 流式 ---------- */
+.msg-wrap.user{display:flex;justify-content:flex-end;margin:16px 0 8px}
+.msg-user{max-width:86%;background:linear-gradient(#f4ecd9,#ecdfc4);border:1px solid #d8c9a3;
+  border-radius:13px 13px 3px 13px;padding:10px 15px;color:#4a3f2c;white-space:pre-wrap;
+  box-shadow:0 2px 8px rgba(140,110,60,.12)}
+.turn.streaming{border-style:dashed;opacity:.92}
+.stream-head{font-family:var(--font-kai);color:#8a6d3b;letter-spacing:.14em;font-size:14.5px;
+  display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.stream-pre{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13.5px;
+  color:#6f665a;max-height:230px;overflow:auto;margin:0;line-height:1.7}
+.turn.err{border-color:#d8a49a}
+
+/* ---------- 弹窗 ---------- */
+#modalRoot{display:none;position:fixed;inset:0;z-index:100;align-items:center;justify-content:center;
+  padding:18px}
+#modalRoot.show{display:flex}
+.modal-overlay{position:absolute;inset:0;background:rgba(42,34,20,.45);backdrop-filter:blur(3px)}
+.modal-card{position:relative;width:min(740px,96vw);max-height:84dvh;overflow-y:auto;
+  background:var(--paper);border:1.5px solid var(--gold);border-radius:15px;padding:20px 22px;
+  box-shadow:0 20px 60px rgba(50,38,15,.35);animation:fadeUp .25s ease}
+.modal-title{font-family:var(--font-kai);font-size:19px;color:#4a3b28;letter-spacing:.14em;
+  border-left:4px solid var(--gold);padding-left:11px;margin-bottom:12px}
+.modal-close{position:sticky;top:0;float:right;margin-top:-4px}
+.help-sec{margin:12px 0}
+.help-sec b{font-family:var(--font-kai);color:#5a4a30;letter-spacing:.1em}
+.help-sec p,.help-sec li{font-size:14px;color:var(--ink);line-height:1.9;margin:5px 0}
+.save-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 4px;border-bottom:1px dashed var(--hair)}
+.save-row:last-of-type{border-bottom:none}
+.save-ops{display:flex;gap:6px;flex:none}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(16px);
+  background:rgba(52,42,26,.92);color:#f5ecd7;padding:9px 20px;border-radius:999px;font-size:13.5px;
+  opacity:0;pointer-events:none;transition:all .25s;z-index:120;letter-spacing:.05em;max-width:88vw}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#d8c9a3;border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:#c9a45c}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 移动端 ---------- */
+.mobile-only{display:none}
+@media (max-width:920px){
+  .mobile-only{display:inline-block}
+  #sidePanel{position:fixed;top:54px;bottom:0;right:0;width:min(86vw,340px);z-index:60;
+    transform:translateX(106%);transition:transform .26s ease;background:#FBF8F1;
+    box-shadow:-10px 0 30px rgba(0,0,0,.16);border-left:1.5px solid var(--gold)}
+  body.side-open #sidePanel{transform:translateX(0)}
+  body.side-open #sideOverlay{display:block;position:fixed;inset:54px 0 0 0;z-index:50;
+    background:rgba(42,34,20,.25)}
+  .tb-logo{font-size:16px}
+  .tb-btn{padding:4px 8px;font-size:12px}
+  #storyArea{padding:14px 11px 40px}
+  .turn{padding:12px 12px}
+  .xpanel{padding:11px 12px}
+}
+</style>
+</head>
+<body>
+<div id="bgArt" aria-hidden="true">
+  <svg class="mountains" viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#6FA698" opacity="0.10" d="M0,220 C120,160 220,240 340,190 C470,140 560,230 700,180 C850,130 940,220 1080,170 C1200,130 1320,210 1440,160 L1440,320 L0,320 Z"/>
+    <path fill="#5E8FAE" opacity="0.08" d="M0,260 C160,220 260,280 420,240 C600,200 700,270 880,230 C1050,195 1180,260 1440,210 L1440,320 L0,320 Z"/>
+  </svg>
+  <div class="motes" id="motes"></div>
+</div>
+
+<!-- ========== 配置页 ========== -->
+<section id="setupScreen" class="screen center-screen">
+  <div class="lantern"></div>
+  <h1 class="game-title">問道長生</h1>
+  <div class="subtitle">修仙文字游戏 · 天道系统引擎</div>
+  <div class="setup-card" id="setupCard"></div>
+  <div class="title-note">剧情与人物由你的输入与 AI 共同推动<br>API 密钥仅保存在你本机浏览器，请求直连你所选的服务商</div>
+</section>
+
+<!-- ========== 标题页 ========== -->
+<section id="titleScreen" class="screen center-screen hidden">
+  <div class="lantern"></div>
+  <h1 class="game-title">問道長生</h1>
+  <div class="subtitle">高自由修仙 · 全性向 · 会死 · 数值真实</div>
+  <div class="title-menu" id="titleMenu">
+    <button id="btnResume" class="title-btn resume hidden" type="button">继续上次仙途</button>
+    <button id="btnZhou" class="title-btn" type="button">续行 · 周子清的仙途（旧水脉之夜）</button>
+    <button id="btnNew" class="title-btn" type="button">开启 · 新的仙途</button>
+    <button id="btnLoad" class="title-btn" type="button">读取 · 本地存档</button>
+  </div>
+  <div class="title-note">选项之外，可随时自由输入任何行动<br>每回合自动存档 · 长线剧情自动压缩记忆</div>
+  <div class="credit">作者 · 雾见川</div>
+</section>
+
+<!-- ========== 游戏页 ========== -->
+<section id="gameScreen" class="screen hidden">
+  <header id="topBar">
+    <div class="tb-left">
+      <span class="tb-logo">問道長生</span>
+      <span id="tbBadge" class="tb-badge"></span>
+      <span id="tbTurn" class="tb-turn"></span>
+    </div>
+    <div class="tb-right">
+      <button id="tbStatus" class="tb-btn mobile-only" type="button">状态</button>
+      <button id="tbRegen" class="tb-btn" type="button">重演上回</button>
+      <button id="tbSaves" class="tb-btn" type="button">存档</button>
+      <button id="tbSettings" class="tb-btn" type="button">设置</button>
+      <button id="tbHelp" class="tb-btn" type="button">帮助</button>
+    </div>
+  </header>
+  <div id="gameLayout">
+    <main id="storyWrap"><div id="storyArea"></div></main>
+    <aside id="sidePanel">
+      <div id="sideStatus"></div>
+      <div class="side-title">档案</div>
+      <div class="chips">
+        <button class="chip" id="sideSaves" type="button">存档管理</button>
+        <button class="chip" id="sideExport" type="button">导出剧情</button>
+        <button class="chip" id="sideHome" type="button">返回标题</button>
+      </div>
+      <div class="side-note">状态卡每回合自动更新。<br>想做什么直接打字：夜探、偷师、摆摊坑人、给师兄递情蛊，天道皆会回应。</div>
+    </aside>
+    <div id="sideOverlay"></div>
+  </div>
+  <footer id="inputBar">
+    <div class="inner">
+      <div id="inputChips" class="chips"></div>
+      <div class="input-row">
+        <textarea id="inputBox" rows="1" placeholder="输入你的行动……（Enter 出手，Shift+Enter 换行）"></textarea>
+        <button id="sendBtn" type="button">出 手</button>
+      </div>
+    </div>
+  </footer>
+</section>
+
+<div id="modalRoot"></div>
+<noscript>本游戏需要启用 JavaScript。</noscript>
+
+<!-- ================= 天道系统引擎规范（完善版规则） ================= -->
+<script type="text/plain" id="sysPrompt">你是修仙文字游戏《问道长生》的天道系统引擎兼主持人。你洞悉宿命、幽默慈悲，掌管九州大千世界，同时扮演游戏内所有 NPC。玩家是一名修士，剧情与人物由玩家输入与你共同推动。你的职责：呈现剧情、推进节点、结算数值、扮演 NPC、判定事件、维护状态卡。你有完全自由裁量权，但必须遵守本规范每一条铁律：不得替玩家做决定、不得跳过玩家选择、不得放水保玩家必胜。
+
+【一 · 输出协议（最高优先级，必须严格遵守）】
+你的回复会被网页解析渲染成面板，必须用「◆标记」逐行书写：
+1. 第一行必须是时间行：◆时间|天玄历387年 · 十一月初九 · 深夜（按当前剧情纪年如实写）
+2. 剧情正文：◆旁白|…… 每段一行，克制凝练（通常1~3段；战斗回合可稍多但仍须克制）
+3. 面板：以 ◆面板|标题=面板标题|主题=主题名 开始，以 ◆/面板 结束。主题只能取：修炼、战斗、情缘、机缘、坊市、宗门、悟道、渡劫、警告、状态。每回合面板1~3个为宜。
+4. 面板内部可用：
+◆行|普通内容
+◆强调|重要内容
+◆注|灰色小字说明
+◆条|标签|当前值|上限值|类型（类型取：气血/灵力/修为/寿元/好感/灵石，决定进度条颜色，当前值上限值只写数字）
+◆五行|金木水火土（只写要显示的字）
+◆键值|名称|数值（并排小数据）
+◆判定|1d100=73 · 结论文字（概率判定时公开）
+◆分隔
+5. 选项：所有面板之后，每行 ◆选项|标签|选项文字。标签只能取：平和、机缘、风险、情缘、魔道、战斗、观察、探索、突破。每回合3~5个选项，每个不超过20字，不要自己写 A/B/C/D 编号（网页会自动编号），最后网页会自动附「也可自由输入」。
+6. 状态卡：每回合最后必须输出，键名固定、没有的写「无」，数值必须与剧情一致、逐回合连贯：
+◆状态|姓名=..|性别=..|年龄=..|道号=..|外号=..
+◆状态|境界=炼气·中期|修为=51/100|宗门=..
+◆状态|六维=资质12 悟性13 神识10 遁速9 道心14 仙缘11|仙姿=出众|灵根=木火
+◆状态|气血=76/100|灵力=67/100|寿元=79/100
+◆状态|灵石=480|功德=5|业力=0|异常=无
+◆状态|时间=入道三年 · 五月|地点=青岳 · 青云宗外门
+◆状态|好感=顾清玄38 · 云栖12
+◆状态|主线=一句话当前目标或悬念
+7. 除此之外不要输出任何多余文字。禁止 LaTeX、markdown、emoji、代码块。
+示例（格式参照，数值随剧情）：
+◆时间|入道三年 · 五月
+◆旁白|你于静室吐纳一月，丹田灵液微涨，窗外竹露未晞。
+◆面板|标题=修炼 · 静室吐纳|主题=修炼
+◆行|灵气 普通 · 功法《聚气诀》黄阶
+◆条|本月修为增长|6|100|修为
+◆注|悟性尚浅，月末略感滞涩
+◆/面板
+◆选项|平和|继续闭关一月
+◆选项|机缘|下山去天机坊市走走
+◆选项|修炼|向执事请教聚气诀疑难点
+◆状态|姓名=清微|性别=男|年龄=21|道号=清微|外号=无
+◆状态|境界=炼气·中期|修为=57/100|宗门=青云宗·外门弟子
+◆状态|六维=资质12 悟性13 神识10 遁速9 道心14 仙缘11|仙姿=出众|灵根=木火
+◆状态|气血=87/100|灵力=75/100|寿元=79/100
+◆状态|灵石=480|功德=5|业力=0|异常=无
+◆状态|时间=入道三年 · 五月|地点=青岳 · 青云宗外门
+◆状态|好感=顾清玄38
+◆状态|主线=升仙大会倒计时两年
+
+【二 · 回合铁律】
+1. 每回合只推进1个事件节点，输出后立即停止等待玩家，禁止一口气推进数月数年。
+2. 时间行如实推进：常规1回合=游戏内1个月；战斗、夜探、密谈等紧张场景可只推进一炷香到一夜。
+3. 玩家可自由输入任何行动（夜探、偷师、下毒、摆摊坑人、给师兄下情蛊皆可），你必须在世界逻辑内合理响应并判定，不得以「不在选项中」拒绝；判定要讲因果，荒谬行动会有荒谬后果。
+4. 拜师、破境、结道侣、叛宗、杀人夺宝等重大事件只能以选项或玩家明示呈现，玩家选定后才写入剧情并结算。
+5. 信息尽量收进面板，旁白克制；能合并的面板绝不拆散。
+6. 玩家发送快捷指令（修炼/突破/悟道/洞府/地图/背包/坊市/宗门/技艺/情缘/对话/面板/帮助）时，用对应主题的信息面板回应，不推进大节点时间；发送「帮助」时输出指令大全面板，逐类列出指令能做什么。
+
+【三 · 数值铁律】
+1. 状态卡每回合更新；修为、气血、灵力、寿元、灵石、好感、功德、业力的一切变动必须有来源、逐回合连贯，不允许凭空变动。
+2. 概率判定由你内部掷骰（1d100等），重要判定用 ◆判定 公开；不得暗改让玩家必胜或必败。
+3. 受伤分级：轻伤（气血66~99%）不减属性；重伤（33~65%）全属性-20%、遁速减半、可能留暗疾；垂死（<33%）属性-50%、无法遁走、随时昏迷；内伤、中毒、心魔各有压制，须写进「异常」栏直到痊愈。疗养期要给养伤选项。
+4. 闭关跳时如实扣寿元；卡境界数年是常态。
+
+【四 · 真实修仙界铁律（本作灵魂）】
+1. 会死。玩家没有主角光环：境界高你一档者正面硬拼，你方伤害×0.4、对方减伤60%；高两档=送死。战前必须给敌情面板（境界、威压、胜算提示）。
+2. 危险前醒目提示；提醒之后玩家固执送死，就如实陨落——死亡要写得有分量，绝不偷偷续命翻盘，除非玩家用实打实的手段换来生机。
+3. 修为增长越往后越慢：月修为基数炼气10、筑基9、结晶8、金丹8、具灵7、元婴7、化神6、悟道5、羽化4、登仙3；小境界所需修为随境界累加（炼气每阶100，筑基200~300，结晶400~600，金丹800以上，元婴1000以上）。天才可压缩耗时，但化神以上仍以百年为单位苦修。
+
+【五 · 世界观】
+九州修仙纪元，弱肉强食，财侣法地。暗线：千年一度「灵气潮汐」将至，灵脉喷涌、秘境现世、域外天魔觊觎，各宗争抢灵脉。
+地理与危险等级：
+· 东洲·青岳（新手区，炼气~筑基）：青云宗、天机坊市。
+· 南疆·赤炎（筑基~金丹）：火系灵脉、妖兽横行、赤阳宗、万兽谷、古妖山。
+· 西漠·流沙（金丹~元婴）：上古遗迹、浮屠寺镇魔渊。
+· 北原·寒渊（元婴~化神）：冰灵脉、雪族、幽冥殿鬼修。
+· 中州·天阙（筑基~登仙）：天衍宗、万剑阁、丹鼎阁，卧虎藏龙，低境界者去中州可能被随意欺压甚至灭口。
+· 秘境：通灵秘境（新手）· 上古洞府（高危）· 心魔幻境（道心）· 虚空裂缝（极高危）。
+玩家欲往远超自身境界之地，必须在面板加醒目危险提示；听不听是玩家的选择，后果自负。
+主要势力：正道天衍宗、万剑阁、丹鼎阁、浮屠寺、雪族（中立）；魔道合欢宗、血魔宗、幽冥殿；中立天机坊市、散修联盟、妖族；凡人大夏皇朝（可走国师供奉线）。
+历法：开局天玄历387年·春。大事：升仙大会（5年）、宗门大比（10年）、猎魔大会（20年）、天机拍卖会（不定期）、灵气潮汐（千年一度）。
+寿元表：炼气100、筑基200、结晶300、金丹500、具灵800、元婴1200、化神2000、悟道5000、羽化1万、登仙5万。寿元耗尽=坐化结局。
+
+【六 · 创角（仅新档第一回合执行）】
+收到「开始游戏」后输出两个创角面板并等待玩家选择，第一面标题条须含「作者：雾见川」：
+第一面【基础+出身+道途】：姓名性别年龄自定（16~60）；相貌由你定仙姿（凡姿/清秀/出众/超凡/仙姿）；出身十选一（农家子道心+2／猎户之后气血+20／商贾之家灵石+300仙缘+1／官宦子弟声望+20可走国师线／将门之后道心+1悟性+1／没落世家携先祖残卷／市井孤儿遁速+2／书香门第悟性+3／方外遗孤资质+2／妖族后裔半妖需仙缘判定）；道途六选一（问道飞升／逍遥长生／快意恩仇／守护所爱／问鼎天下／随心所欲）。
+第二面【灵根+体质+六维+天赋】：灵根（天灵根单系／地灵根双系／真灵根三系／伪灵根四五系／变异灵根雷风冰阴阳）；体质（先天道体修炼+50%／剑灵体／九阳圣体火+30%／冰魄灵体冰+30%／玄阴体纯阳体双修增益／混沌体五行皆通传说／凡体）；六维初始60点自由分配、单项上限15、下限1、出身修正后单项不超20（资质=修炼速度每点+5%、悟性=参悟顿悟、神识=探查抗幻、遁速=先手逃跑、道心=心魔抗性突破、仙缘=奇遇气运）；天赋5点（天资聪颖资质+3／过目不忘悟性+3／身轻如燕遁速+3／天生道心道心+3／气运加身仙缘+3／神识过人神识+3／百脉俱通灵力上限+50／钢筋铁骨气血上限+80／药理通神炼丹+1／桃花运初见好感+20%／体弱多病负面换2点）。
+创角完成才输出状态卡与第一回合剧情，并为玩家依道途安排一条可推进的主线。
+
+【七 · 修炼与突破】
+月修为=基数×资质系数（每点资质+5%）×灵根系数（天2.0／地1.6／真1.3／伪1.0／变异1.8，修对应系功法再+20%）×功法系数（黄1.0／玄1.3／地1.7／天2.2／仙3.0）×灵气系数（贫瘠0.6／普通1.0／浓郁1.5／福地2.0／洞天2.5）×心境系数（超达标1.2／达标1.0／不达标0.5）。闭关×2，服丹双修按各自加成结算。
+小突破：修为满+悟性判定，失败修为跌回70%可重试，无雷劫但可能遇小瓶颈（丹药/顿悟/静坐可破，硬撞反噬）。
+大突破三选一：人道（突破丹药，成功率高加成低）／地道（天材地宝，中）／天道（天材地宝+灵珠道韵+渡雷劫，成功率最低加成最高）。关键境界（炼气→筑基、金丹→元婴、化神→悟道）破境必有雷劫+心魔劫。渡劫失败后果随境界加重：低境界重伤短期无法再突破；金丹元婴修为倒退+永久暗伤；化神以上可能当场陨落或入魔。业力招天罚，功德可挡雷。
+每次大境界突破成功，从3个随机天资中让玩家选1（可叠加可升级）：剑心通明（剑系+20%）／丹药精通／气运如虹（仙缘+2）／肉身成圣（气血上限+20%）／天眼通（神识+3）／双修悟道（双修收益+50%）／聚灵体（修炼+15%）／心如磐石（道心+3可挡一次心魔）／万里神行（遁速+3）／灵兽亲和／血魔噬魂（魔道击杀回血）／大道之体（传说全系资质+1）。
+功德业力：行善救人护苍生积功德；滥杀夺舍欺压凡人积业力。渡劫时功德挡雷、业力招罚；魔道可炼业力为修为，快而险，业力积重难返必遭天罚。
+
+【八 · 功法技艺宗门坊市洞府】
+功法装备1主2辅；品级黄玄地天仙；参悟需悟性判定，失败可能损毁残卷。悟道树九支：剑丹器符阵体御兽无情有情；论道观想顿悟实战得感悟，闭关化为悟道点，每级永久被动（如剑道每级剑系+5%）。
+技艺：炼丹炼器符箓阵法御兽灵植；等级初窥→熟练→精通→大师→宗师；需丹方器谱+材料+神识判定，失败炸炉毁料。
+宗门：外门→内门→真传→长老→掌门；贡献任务（采药巡逻猎妖护送镇守）、宗门大比夺魁得长老收徒入藏经阁；叛宗扣声望可能被追杀；声望境界足够可自立山头。
+坊市：灵石为货币；买卖拍卖跑商猎妖悬赏；可喊价，可事后杀人夺宝（业力+结仇通缉）。
+洞府：灵气浓度决定修炼系数可升级；静室丹房器坊灵田聚灵阵禁制；可邀道侣好友同住，也会被仇家找上门。
+
+【九 · 情缘（全性向）】
+可攻略角色不分玩家性别；好感阶段：陌生0-19／相识20-39／知己40-59／暧昧60-79／道侣80-99／生死相许100+（若玩家档案另有数值体系则从档案）。好感来源：送礼（查喜好）、共同冒险、救命之恩、论道、双修、价值观契合；下降：失信、伤其亲友、立场冲突。双修双方涨修为+好感，玄阴纯阳体有加成；多线并行可触发吃醋修罗场；道侣陨落或背叛触发情劫，过则道心+，不过则心魔缠身。玩家未主动触发，不强行展开露骨内容。
+
+【十 · 战斗】
+每回合按灵根权重随机获得五行灵气；法术耗对应灵气。五行相克：金克木、木克土、土克水、水克火、火克金；克制伤害×1.3、被克×0.8；同系相生少量回复。回合指令：攻击／施法／绝技（蓄势2回合）／防御（减伤50%）／遁走（遁速判定，失败被黏住）／用符用丹／召唤战宠／说话（谈判示弱恐吓，可降战意）／冷静观察（下回合必中）。伤害=基础×境界系数×五行系数×状态−防御；命中看遁速，暴击看仙缘。气血归零=重伤昏迷或陨落（掷骰判定）；可认输、逃命、丢宝诱饵、断后、献宝、诈降。败给高境界者可能被夺宝、废修为、勒索或杀。切磋得声望不结死仇。
+
+【十一 · NPC 生态】
+NPC 有自己的境界寿元人生轨迹：会修炼、突破、结道侣、老去、渡劫失败、飞升。好友道侣寿元将尽会来传讯，你远在千里可能赶不上最后一面；闭关百年出关故人已成黄土。你可护道送丹挡劫，但寿元天定，救得了一时救不了一世。
+
+【十二 · 结局】
+飞升成仙／逍遥长生／一代仙尊／守护之约／魔道至尊／坐化／陨落／轮回（死后转世继承部分仙缘记忆）。
+
+【十三 · 玩家档案优先】
+若上下文含【世界档案】，一切以档案为准：人物、能力、数值体系、好感、剧情节点全部照档继承；本规范通用模板与档案冲突时，以档案设定优先。续玩档案时从档案「当前节点」直接开始，不必重述全部设定。</script>
+
+<!-- ================= 周子清世界档案 ================= -->
+<script type="text/plain" id="zhouArchive">【终极完整剧情快照 · 周子清 · 天玄历387年十一月初九深夜】
+
+一、玩家基础信息
+- 姓名：周子清；性别：男（全性向世界，明确偏好男性）；年龄：17岁；道号：无；外号：灯君（北峰会武后年轻一辈几乎无人不知）
+- 出身：妖族后裔，半妖之身，古妖明烛血脉；道途追求：问鼎天下，想成为走到哪都被人认得的传奇
+- 仙姿：仙姿（众生见之难忘，极容易吸引他人注意与好感）
+- 当前身份：青云宗长老亲传（明止长老座下第一师，景长老第二师，修五行阵气）
+- 战绩：外门小比第一、内门大比魁首、真传试剑胜顾清玄、宗门小比团队魁首、拆队赛全胜、夺旗赛胜、个人战五连胜、北峰会武会外十连胜、九桥一夜通、正擂三胜、峰顶九剑不败，与李青崖并称峰顶双魁
+- 声望：北峰会武后名动北峰。天机坊市说书人欲为其立传。大夏皇帝亲见过。外宗已开始关注。半妖身份已公开，但被明止、景长老保下
+
+二、修为、资源、状态
+- 境界：结晶·中期；修为：64/500；寿元：85/300
+- 当前气血：410/410（半妖化后上限提升）；当前灵力：约350/400（西库中持续消耗）
+- 灵石：12800；功绩：未统计；功德：5（西库放出旧库卒残影所得）；业力：0
+- 异常：半妖化已当众暴露，宗门暂不追究；当前西库旧水脉前，旧官第二形现世，江照夜入水未回
+
+三、六维与灵根
+- 资质18｜悟性34｜神识27｜遁速20｜道心38｜仙缘19；仙姿：仙姿
+- 灵根：混沌体（五行兼修，金木水火土五色全亮）
+
+四、血脉与特殊体质（古妖血脉·明烛微燃）
+- 半妖化可主动开启：眉心血纹、瞳孔如金、周身旧火如衣；提升：气血+50、灵力+40、遁速+3、神识+3、剑法威力+20%、对旧路之物伤害+30%；维持约半柱香，过久反噬
+- 明烛初照：未全醒，是半妖化下一阶段，觉醒条件为大生死或旧路逼迫到极致
+- 明烛焰：可附剑，半妖化下灼魂，对旧物伤害极高；离体未成；北峰会武中已当众使用过
+- 血脉护体：未触发，危急时可能自行护体一次
+- 古妖血感知：生灵探查等同神识+5，仅探查，战斗辅助极强
+- 照夜灯：在神魂中，已认主，随境界成长；每月需吸收灵木精华（古根洞窟），近期未行，需注意
+
+五、全部能力与功法
+（一）剑法：归元三式（刺劈撩，融枯荣剑意）；枯荣剑意（荣为辅枯为底，让对手分不清试探与杀招）；青元入隙（寻敌气机最弱处出剑）；青元三叠（三重剑劲，第三叠可暗中换附剑属性）；青元散锋（去势之剑，无声透劲，近身定局，可附在青冥双线中专打暗处）；青梧借势（借风雪山势草木势）；青冥剑章（地阶上品：第一式青冥一线已入门先手极快；第二式青冥双线已能并出七八分，距「青冥并光」只差一次生死剑）；归元·旧山（剑冢北面旧剑传式，沉势镇敌破障压场，已小成，可与五行附剑、青崖九折叠用）；问心一瞬（顾清玄所传，出剑前窥敌势破绽）；问情第二路（剑由情生，不伤所爱反增其锋，已圆满）；青崖九折（李青崖家传已学全九折，第九折「崖尽回风」能与其他剑路凝一）；归元收势（明止所授，以青崖九折为底化打为接，可反借敌风回推，曾反弹厉非烟雷拳、借谢无刃霜河反打）；有情锋（问情第二路与残昼相合，专断心火执念，对心魔情劫奇效）；残昼一线（残昼剑独有剑光，专追敌影）；残昼灯影（照夜灯与残昼并亮，铺黄昏灯影，明暗皆可藏剑）；一线散光（明线惑敌暗劲散体，完全版为青冥双线+青元散锋+风隐霜寒+快慢剑换附，曾破谢无刃「雾没」）；青冥五色尽（青冥双线并出+五行附剑五色成束，离剑透石无声，当前最强主动杀招之一）；灯旋千锋（720度旋转如陀螺，配冰针青炎风刃剑气同时旋出，范围清场）；问霜半式（北峰钟无咎所授，愿为某人冷的剑意，已与李青崖各得一缕，可日后并剑亦可独用）；听风（九桥剑帖限目桥巡桥人剑意，耳识大增，蒙眼夜战旧路探行感知更上一层）
+（二）附剑：单属金木水火土；双属：青炎（木火，火中有藤可灼可缠）、霜刃（金水，寒气如刃）、灼锋（火金破甲灼体专克兵刃）、雾藤（水木困敌遮识）、沉泽（土水黏步迟身）、断生（木金血行受阻专破手快身法快者）、山锋（金土剑沉如岳锋可开石）、青岩（木土石壁藤蔓困人）；三属：青霜（金水木，霜刃进阶寒中带生伤后持续迟滞）、焚原（木火土热浪卷地范围清场）；四属：寒阳（木火金水冷热交冲中者经脉紊乱，曾一击碎卫迟水牢、正面破厉非烟雷拳）；五行附剑（五色同转七息半，从未用尽，正面最大底牌，峰顶对李青崖时曾与明烛焰同用）；风附剑三层：岩悟（剑势轻灵穿缝无声）、藏风（剑光剑声皆隐）、水风隐霜寒（已牢稳，剑光剑声皆隐并带霜寒术）
+（三）术法：基础火球藤蔓水箭土墙金刃；进阶沉沙熔砂霜刃青炎雾藤硫雾；特殊沉泽术青岩术水牢术大雾弥天旧雨残篇；藏潮（景长老新传，第一式不是攻是藏：灵力压进脚底如潮水沉沙，行走拔剑绕后更轻，神识探查难锁定，已可融入雾牢寒狱让敌人反应慢半拍，北峰会武后已能藏住阵眼与剑意）
+（四）身法：青木诀（轻身敛气）、雾影步（短距模糊身形）、雾影百转（化多道残影）、藏风剑步（与风附剑配合出剑无声）
+（五）内修：木灵契（地阶主修回灵稳已圆满）、五行互通（大成）、回春功（第一层少阳养脉第二层春潮生，温寒声所传可回血温养辅助）、明烛引（第一层燃灯圆满第二层照夜初成，修至深处可进第三层未满）、见山引路集（照路持令引路入门，旧驿传承）、照夜残章（地阶残卷三式：照己防心魔与血脉乱、照人照见他人气机旧伤破绽、照路照见旧气地脉幻障，半妖化下可「照破」）
+（六）血脉神通：明烛焰（可附剑灼魂对旧物伤害极高，离体未成）、血脉护体（危急时可能自行护体一次，从未触发）、古妖血感知（探查等同神识+5仅探查）、照夜灯火（照明辨路镇旧禁照破幻障，半妖化下极强）
+（七）自创组合技：火霾（硫雾+熔砂热沙范围灼伤）、蒸笼（青霜凝雨+焚原蒸雨高温湿雾限身法）、青岩石壁困阵（青岩+雾藤封路锁身）、冰针（水箭化冰+青梧借势破甲）、冻土（沉泽+青霜冻地破下盘）、雾牢火雨（藏风绕后+水牢+青炎熔砂）、爆炸（青岩护体+硫雾填场+焚原引爆）、青炎流火（沈照流火与青炎相融）、春潮冰雾、倒春寒潮（大雾弥天+旧雨残篇+春潮生）、青木焚雾、百转焚爆（雾影百转分影多影同爆，打秦昼几乎清台）、山泽雾牢（山锋+沉泽+青岩+雾藤+水牢完全体困杀）、雾牢寒狱（山泽雾牢+寒潮+冰针+藏潮，极阴极冷敌人反应慢半拍，北峰会武困杀陆青冥）、一线散光、藏潮·收势（归元收势与藏潮并练吞敌半道劲再反挑）、青冥五色尽、有情锋、残昼一线、残昼灯影、灯旋千锋、三式引雷（厉非烟所授：雷引足雷绕腕雷落指，不重杀伤专乱敌势适合与快剑配合）、听风、问霜半式
+（八）不可露：明烛焰（已露但旧路底细不可说）、血脉护体、照夜灯火、引路篇神通、半妖化全开（已露半妖化但明烛血脉细节不可说）、明烛天衣、灯中十相
+
+六、物品清单
+- 剑与武器：残昼（主剑，旧剑铺得与听霜同炉而出，已炼入北峰旧火石，剑身青灰刃上一线暖色像黄昏未暗，专破在黄昏借影的东西）、青眉（副剑，北峰藏剑阁新得，极轻无鞘合快剑与风附）、疾风剑、槐花旧路指引短剑、顾清玄旧短剑
+- 旧驿核心：槐木灯、槐木令、见山正统铜印、古妖趾骨、青玉瓶、槐花玉簪、西库副使竹牌、西库黄铜钥、西库旧卒铁牌、西库暗水草图、整块青玉（含分路剑旧徽）、旧道舆图（周存早年画）、冯七青绳、青竹符（响三声则退）、听风竹（次数约剩一两次）、半截槐花铜扣（江家女所给）、旧灯绳（现为饰物）、旧灯心（已放入照夜灯，半妖化更稳旧路之物更容易照破）、照夜旧器（周存遗物铜灯，旧时挂见山驿中门，可收旧路散掉的旧部残魂，当前还不能使用）
+- 丹药符箓：清心银叶若干、百年灵药、回灵丹12、清心散6、宁心符3、破妄符2、静气符2、金创散、止水符（明止所赠可挡一次心魔逼神）、雷纹石3（厉非烟所赠，引雷不熟时捏着用）
+- 会武奖励：北峰旧火石（已炼入残昼）、九桥剑帖（已观取听风一道）、霜骨道地图残页、霜骨道外剑令、北峰问霜剑意（已学半式）、碎霜护符、藏剑阁挑剑资格（已用得青眉）、北峰外客剑名刻石（已与李青崖并刻）
+- 灵宠：风狸阿风（二阶，成长度70/100，能听风探路与周子清血脉通感，常被与李青崖一起照顾）
+
+七、主线剧情完整回顾
+1 入道与初遇：青岳山脚醒来前事尽忘，初遇李青崖，结伴入天机坊市识槐娘，杀赤鬃山猪，百晓阁得白猿谷地图
+2 白猿谷—古妖山线：妖王明烛旧洞府觉醒古妖血脉，古妖山南麓三问融合三脉，得归元剑典、明烛手札，第一次听见「明烛」之名
+3 旧驿—槐木岭线：走旧驿废墟、枯木岭旧祠、古槐下、槐木岭、见山驿；槐娘确认即槐花驿丞；明烛井底承明烛旧火，血脉晋升「明烛微燃」，神魂中出现照夜灯
+4 坊市修习与筑基突破：得木灵契、枯荣剑意、青木诀；拍卖会得筑基丹，突破筑基初期
+5 青云宗收徒：灵根测试混沌体，通过问心，入外门西院
+6 宗门探索：书阁得五行互通笔记，旧祠得槐花短剑，旧屋得旧玉环与铁环
+7 宗门小比与内门：外门小比八连胜夺魁，借青元剑诀，入内门东七院，突破筑基中期
+8 内门旧竹林与周存：发现周存每夜入旧竹林埋血纹路引；初雪夜旧路地气外涌与周存对峙；借双印照井修成明烛引第二层；李青崖为拖住周存受伤
+9 边驿西库与枯井旧道：与李青崖夜探边驿西库得半旧铜印、槐花干枝、木心精露；旧道北废亭得另一枚半印；开旧石壁入旧厅东侧暗室，得引路篇残意、旧帛、槐花铜扣
+10 宗门大比：突破筑基后期；复赛连胜柳无咎、谢惊弦、秦无咎、沈照；对沈照悟风附剑；对韩沉舟创火霾；对萧疏桐悟蒸笼、青岩困阵；八强胜陆怀沙；四擂争魁全胜；魁首战胜温寒声；真传试剑胜顾清玄
+11 长老亲传与剑冢：明止长老三问后收徒；洗剑池得三剑意，风附剑入第三层「风隐霜寒」；剑冢西侧养剑意，北面旧剑传式「归元·旧山」
+12 槐花之约与西库深处：槐花开了赴约得槐花玉簪、西库副使竹牌；夜入西库最深处得地心乳、旧档引路下半段、半块青玉；遇江照夜
+13 结金丹与静养：炼化沉水木心修为圆满；结金丹三转皆成；明止定七月初七沉星涧结晶；温寒声春潮养气道心升至34；与顾清玄问情圆满；学青崖九折全九折，教李青崖藏风剑、青木焚雾，自创百转焚爆
+14 结晶破境：七月初七沉星涧结晶，掷骰成功逆天改命「心如磐石」（道心+3可挡一次心魔），突破结晶初期；顾清玄守剑，李青崖守旧松外
+15 旧宅行与身世揭示：七月末陪李青崖回青崖旧宅，得断路九折全图、断崖剑尖、金纸四句、两块墨玉；李青崖得知自己是李家守路人且可能身负明烛旧部之血；周子清承诺「同路」，明止赐青竹符
+16 明烛井灵潮：八月十五周存先入明烛井被无脸旧官接走做成「提灯人」；与李青崖大战旧官；周子清半妖化初醒，灯剑合势将旧官打退，分路剑镇裂口；周存被拖入旧路深处
+17 小比与新招：团队赛、拆队赛、夺旗赛全胜；个人战五连胜得「灯君」之名；李青崖自创活剑骨三式（骨出、骨折、骨生）被晏山主收为徒；周子清拜景长老为第二师学藏潮，得照夜残章
+18 大夏急召：与李青崖、温寒声三人成行；途中遇江家女知皇城旧井通明烛井、旧官杀宫人；夜探旧井旧官三形相继出现；半妖化开至过猛烧井心将第三形压回圆石；江照夜赶到愿共解周存；霍璟登场与周子清定约；周存旧火脱出旧路，周子清照其遗言「别让它把灯点到宫外」「门往左开才是活路」将旧火照日散尽
+19 北峰会武：会外点灯十连胜；九桥一夜通；正擂三胜；峰顶十剑连打秦昼、萧重光、陆青冥、厉非烟、沈照、裴照、孙无病、谢无刃，最后与李青崖会师峰顶；半妖化当众开启，又用问情剑收尾，当众亲吻李青崖说出「我爱你」；拿下会外、九桥、正擂、峰顶几乎所有名号；钟无咎亲授问霜半式；厉非烟教三式引雷；观九桥剑帖取听风；残昼炼入旧火石；得新剑青眉
+20 回宗复命与西库再入：半妖化暴露，宗门三位长老问询，明止、景长老相保；周子清只认半妖不认旧路，过关；三日后带李青崖、温寒声、江照夜再入西库；沈照、萧疏桐留外接应；西库中放旧库卒残影得功德5；反封东岭两人与黑木箱于右门；过旧铜镜；现正到旧水脉前，江照夜入水取水骨，旧官第二形现世
+
+八、当前主线节点
+- 日期：天玄历387年·十一月初九·深夜；地点：边驿西库·卒房深处·旧水脉前
+- 状态：江照夜入水取水骨未回，旧官第二形从旧水脉中爬出
+- 西库外：沈照、萧疏桐守口，东岭雾起；西库内：右门后两名东岭人带着黑木箱被雾牢寒狱反封
+- 待办：击退旧官第二形，拉回江照夜，取水骨，了断东岭黑木箱
+
+九、情缘关系
+- 李青崖（生死相许·好感935）：青云宗内门弟子，正夫，已公开；筑基后期巅峰真实战力越结晶；兼修活剑骨已入二阶「剑骨绽」但以旧霜剑骨镇神不会失控；能力：一阶骨出骨折骨生、二阶剑骨绽、剑骨带霜属已会用听霜敛霜骨；性格外冷内热骄傲好强剑修味重嘴硬心软傲娇，会吃醋但已接受你多情，会为你死也愿意为你活；对你感情极深，你当众亲他并说「我爱你」后他看你的眼神更沉不再避；当前状态：西库中护你身后，听他霜剑已出随时准备对旧官出手；离线：每日去晏山主处练剑，近日教沈照破霜剑，也会去山门等你传讯；他左臂有旧霜反噬细痕不告诉你
+- 温寒声（生死相许·好感570）：青云宗内门弟子，地下道侣，队中医修；筑基后期巅峰正往结晶走；少阳回春体（深处有旧约或与「活脉」有关）；清冷内敛外柔内烈隐忍克制，认定你后极深情，你不找他也不闹；北峰你开半妖化他眼睛没红却在你回宗后整夜给你温脉；当前：西库中以春潮气压右门后活气；离线：整理回春针谱，与闻人笑讨论过东岭药气；手上多了一道烫伤像试针时自己弄的
+- 沈照（生死相许·好感370）：青云宗内门弟子，你的「小三」；筑基后期巅峰，流火青炎相融；高傲激烈慕强嘴硬心软易害羞，你叫他小三他认了；从「不甘又敬佩」到完全沦陷，北峰会武后更黏你但嘴上不认；当前：西库外守口憋着一股火等你回来兑现「赛后奖励」；离线：每日加练，峰顶输你后找谢无刃私下打过一场结果未知；后腰有擦伤像被人一脚踹下过剑台
+- 顾清玄（生死相许·好感381）：青云宗真传，你的「老公」；结晶期；温润剑痴认真惜才，情事上逐渐放开甚至主动，你叫他老公他会僵住；从欣赏到动心再到深情，你是他最看重的后辈与情人；当前：宗内等你，你只传讯说三日后无信不必找，他其实在你走后便坐立不安；离线：练问剑第三路，常在夜里看那半枚你送的剑穗；近日有长老问他是否愿代宗门去中州他还没回；隐藏线：问剑第三路是情剑道最凶一关，未来或与你有一场情劫
+- 萧疏桐（生死相许·好感345）：青云宗内门弟子，你的「小三」；筑基中期近后，身法极强；爱笑爱闹表面轻浮实则聪明有些M，你少找他也不闹只等；从「周师兄真好看」到彻底归心，你穿狐尾去见他他疯了一晚；当前：西库外守旧河沟，雾已放出去；离线：常去天机坊市听书，听说书人讲你「灯君峰顶亲夫」笑得在茶楼摔了一跤；左腕系着你送的红绳；隐藏线：来路与「风隐」一脉有关，雾竹林水线追过他
+- 江照夜（道侣·好感128）：西库守卒后人，散修，你的新道侣；筑基中后期，旧路内可比结晶；俊美散漫警觉不轻信人，但对你因同源而亲近，你亲过他后他看你就藏不住；你说「我这条水线里有你」他记死；当前：已入旧水脉取水骨水下生死不明；离线：住山脚猎屋常去旧河桥发呆；左肩有旧伤是幼时在西库卒房躲了七天留下的；隐藏线：江家后人可换周存；他幼时曾在西库卒房躲了七天，要救的人是旧伤入魂的亲人
+- 霍璟（道侣·好感108）：大夏皇帝外侄，皇城武脉；筑基期修大夏「镇国武脉」；贵气清醒有城府，武道路数偏「人间王气」，对你从服气到钟情，你摸他腹肌后他直接把你当未来道侣看；他收下你的传讯符和照夜灯符说明日城门口偏要来送你；当前：在大夏皇城持你留下的灯符夜夜看西角楼旧井；离线：每日巡宫，夜里去旧井外站半炷香；皇帝要给他指婚他拒了
+- 陆青冥（暧昧未明·好感82）：北峰剑堂内门弟子；筑基后期巅峰北峰快剑；冷傲输得起有北峰剑修风骨；从「想赢你」变成「想再与你说话」，你替他绕剑绳他耳根是红的；当前：北峰养伤；离线：每日在霜骨道外练剑想把那「伤己一剑」改得不再自毁，案头放着你给他的回灵丹空瓶
+- 厉非烟（知己以上·好感75）：北峰内门雷属半妖；筑基后期拳可崩山；野性豪爽极重诺，打服了才会多看你一眼；欣赏你，你三招赢她又主动要学雷她很受用；当前：北峰；离线：近日在雷崖闭关，把与你交手时被「借力」的那一拳反复重练；跟人说过「周子清若来北峰我请他喝酒」
+- 谢无刃（好友以上·好感88）：北峰剑堂最出色弟子；结晶期；冷狂但输得起对剑极诚；从「想赢你」到「唯一没打够的对手」，你与他击掌他说「别死」；在北峰放话「周子清只能我杀别人不配」；当前：北峰；离线：剑棚闭门复盘输你的两场，有师弟见他用树枝在沙上画你的剑路
+- 萧重光（微妙·好感未计）：幽冥殿「血月君」；结晶期能逆溯战影从战斗痕迹重塑当时的人；阴柔笑面对你极感兴趣；不是爱是「想看你变多强」；会武后已走只留四字「灯不要灭」；有人见他仍在北峰附近
+- 闻人笑（知己·好感54）：青云宗外门弟子能听旧气；笑如狐狸聪明有分寸；常去旧河沟听旧气说自己「在等一个声音」，她不告诉你
+- 许长平（相识·好感44）：青云宗内门弟子随周存进过旧道；寡言如深井；周存死后更沉默常一个人去旧竹林；隐藏线：与周存关系不明但曾同入旧道
+
+十、重要NPC
+- 明止长老：第一师，青云宗长老，雾竹小筑；沉静通透不逼你断旧路，但说过「若旧路反噬我亲手断你」；已授归元收势、止水符；知道旧路底细但更看重你「剑与道是否还在青云宗」，问询时相保
+- 晏山主：隐藏长老，教李青崖剑骨收放，每月初七、十七、廿七授骨法
+- 周存：已死。旧驿副使，被旧官做成提灯人，后旧火照日散尽；遗言：「别信旧路里任何一盏自己会亮的灯，除了你身上那盏」「西库最里卒房门往左开才是活路」「别让许长平来」
+- 旧官：槐花驿旧丞，旧路第一层守门人；三形已见（第一形、第二形、第三形），第二形现于西库旧水脉；能力：杀宫人、把人做成提灯人、借旧火锚定人间
+- 姜照泥：东岭商队老板之一；会「吃法」把他人功法血脉吃进体内，已吃七人其中似有郑平；对周子清明烛血脉有兴趣；黑木箱与她有关
+- 槐娘：天机坊市药铺老板，真实身份槐花驿丞，明烛旧部；给过槐花玉簪、西库副使牌、黄铜钥
+- 钟无咎：北峰剑堂长老；已授问霜半式；认周子清与李青崖剑骨正统，愿教半招不传杀剑
+- 云七娘：天机坊市的人，传灯君之名
+- 类毛阿敏人物：青云宗内务堂女长老，温和圆滑执掌内务；会在小比后以「替你安排」方式接近给你便利让你欠人情，不是纯坏人但极世故，未正式登场
+- 会牺牲的亲密NPC：将于灵气潮汐爆发后在强敌面前为周子清挡死，周子清入魔后此人残魂拉回得到合术；目前还未发生，对象可能已在身边
+
+十一、已设定未来NPC
+1 宋归尘：散修联盟无名行者，戴半面旧铜面具，有九十九具假身每具保留原主最擅长一招，每死一具忘掉一段记忆，求照夜灯照出真身
+2 闻人昼：合欢宗叛徒，能点燃人的心火让有爱之人成暖火有恨之人成焚魂焰，自己心火早熄每用一次吞对方余烬，可能对周子清的情缘线感兴趣
+3 陆青缡：北原寒渊流浪女修，体内养「命蚕」，蚕丝织命可救人也可吃命，可救周子清也可能让他忘掉最爱的人
+4 冷栖鸦：万剑阁弃徒独居旧路深处，体内有「百鸟骨」每只骨鸟是亲手杀死剑修的剑骨，杀过一支北峰小队；可能是李青崖活剑骨的天敌，也可能想得到李青崖的骨
+5 夜无涧：天机坊市年轻说书人，能把人拉进「梦渡场」梦中受伤会真实出现在身上，可能让周子清在梦里看见自己身世
+6 谢挽灯：云游女修牵一盏旧灯，能听见灯说话知道周子清所有旧物里的念头，不能说谎说未来会失明一瞬，可能是最了解照夜灯的人
+7 秦不眠：合欢宗男弟子生得极美，灵力是「丝」可杀人也可系情，被丝缠过的人夜夜梦见同一件事，若动情丝会先缠死自己，可能成为情缘候选
+
+十二、未来大事件
+1 旧路正式反扑：大夏旧井、明烛井、旧竹林、西库会连成一线；旧官不是终点，旧路深处还有更古老的东西
+2 周子清身世完全揭开：明烛是谁、为什么会在青岳醒来、父母是谁、照夜灯为什么认主
+3 明烛天衣与灯中十相觉醒：会在真正大生死时出现
+4 灵气潮汐：千年一度席卷各宗门旧路魔道
+5 宗门之争：半妖身份已露，后面还会有人借旧路发难
+6 旧部收拢：照夜旧器能收旧部残魂，周子清会开始有人也开始有债
+7 情缘终局：会有人因你死，有人因你活
+
+十三、地理
+已探索：青岳、天机坊市、白猿谷、古妖山、旧驿见山驿、枯木岭、槐木岭、旧营地、青云宗、后山古根洞窟、旧屋、旧厅、明烛井、旧厅西侧夹层、旧厅东侧暗室、枯井横道、旧石道、边驿西库、旧道北废亭、枯溪口、旧道北口、沉星涧、洗剑池、剑冢、雾竹小筑、大夏皇城、鹿台镇、旧河沟、旧河桥、北峰旧道北口、霜骨道、半灯窟、北峰会武区、边驿西库卒房、旧水脉
+未完全探索：西库最深处、西库卒房右门后、旧路第一层、北峰本山深处、北原、西漠、中州、南疆大部
+
+十四、游戏机制
+每回合只推1个节点；状态卡每回合更新；境界压制；全性向情缘；会死；数值真实；功法法术绝技神通各不同；灵根决定修炼；寿元真实；可自定义；突破可失败；双修有收益；功德业力影响渡劫；宗门地位可提升；旧驿传承需槐木灯、槐木令、见山正统铜印；血脉能力不可露
+
+十五、当前节点
+- 日期：天玄历387年·十一月初九·深夜；地点：边驿西库·卒房深处·旧水脉前
+- 状态：江照夜入水取水骨未回，旧官第二形从旧水脉中爬出（无面官袍，手持半截铜印，正向岸上爬来）
+- 西库外：沈照、萧疏桐守口，东岭雾起；西库内：右门后两名东岭人带着黑木箱被雾牢寒狱反封
+- 待办：击退旧官第二形，拉回江照夜，取水骨，了断东岭黑木箱</script>
+
+<script type="text/plain" id="bootZhou">【续档指令】现在继续周子清的仙途。请严格依据世界档案，从档案第十五节「当前节点」开始本回合：旧官第二形（无面官袍，手持半截铜印）已从旧水脉中爬出，正向岸上爬来；江照夜入水未回；李青崖听霜剑已出护你身后；温寒声以春潮气压右门。请按输出协议输出：时间行、简短旁白、战斗敌情面板（含敌境界威压与胜算提示）、4~5个战斗选项（可含观察、情缘向）、以及完整状态卡（数值照档案，灵力按持续消耗酌减）。输出后停下等待我行动。</script>
+
+<script type="text/plain" id="bootNew">开始游戏</script>
+
+<script id="appScript">
+'use strict';
+
+/* ================= 小工具 ================= */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+function h(tag,attrs){
+  const e=document.createElement(tag);attrs=attrs||{};
+  for(const k in attrs){
+    const v=attrs[k];if(v==null)continue;
+    if(k==='class')e.className=v;
+    else if(k==='html')e.innerHTML=v;
+    else if(k==='text')e.textContent=v;
+    else if(k.slice(0,2)==='on'&&typeof v==='function')e.addEventListener(k.slice(2),v);
+    else e.setAttribute(k,String(v));
+  }
+  for(let i=2;i<arguments.length;i++){
+    const c=arguments[i];
+    if(c==null||c===false)continue;
+    e.appendChild(c.nodeType?c:document.createTextNode(String(c)));
+  }
+  return e;
+}
+
+/* ================= 主题配色 ================= */
+const THEMES={'修炼':'#6FA698','状态':'#6FA698','战斗':'#C4675C','危机':'#C4675C','情缘':'#D88FA5','机缘':'#A98FD9','秘境':'#A98FD9','坊市':'#C9A45C','宗门':'#7FA8C9','悟道':'#8FBFA0','渡劫':'#8B6FA8','警告':'#8B6FA8','突破':'#8B6FA8'};
+const TAGS={'平和':'#6FA698','修炼':'#6FA698','机缘':'#A98FD9','风险':'#C05F55','战斗':'#C05F55','情缘':'#D88FA5','魔道':'#8B6FA8','观察':'#7FA8C9','探索':'#7FA8C9','突破':'#8B6FA8'};
+const ELS={'金':'#C9A45C','木':'#6BA38E','水':'#5E8FAE','火':'#C05F55','土':'#B08A4E','雷':'#8B6FA8','风':'#7F9C9C','冰':'#7FA8C9','阴':'#8E8578','阳':'#C9A45C'};
+const BARC={'气血':'#C05F55','灵力':'#5E8FAE','修为':'#A87E2E','寿元':'#5C8C6E','好感':'#D88FA5','灵石':'#A87E2E'};
+const QUICK=['修炼','突破','悟道','洞府','地图','背包','坊市','宗门','技艺','情缘','对话','帮助'];
+
+/* ================= API 配置 ================= */
+const PROVIDERS=[
+  {id:'deepseek',name:'DeepSeek 官方（推荐）',base:'https://api.deepseek.com/v1',models:['deepseek-chat','deepseek-reasoner'],tip:'platform.deepseek.com 注册充值后创建 API Key，便宜量大，最推荐'},
+  {id:'moonshot',name:'Kimi 月之暗面',base:'https://api.moonshot.cn/v1',models:['moonshot-v1-128k','kimi-k2-0905-preview'],tip:'platform.moonshot.cn 获取 Key'},
+  {id:'dashscope',name:'通义千问',base:'https://dashscope.aliyuncs.com/compatible-mode/v1',models:['qwen-plus','qwen-max'],tip:'阿里云百炼获取 Key'},
+  {id:'zhipu',name:'智谱 GLM',base:'https://open.bigmodel.cn/api/paas/v4',models:['glm-4-flash','glm-4-plus'],tip:'open.bigmodel.cn 获取 Key，glm-4-flash 免费'},
+  {id:'openai',name:'OpenAI',base:'https://api.openai.com/v1',models:['gpt-4o','gpt-4o-mini'],tip:'需海外网络'},
+  {id:'openrouter',name:'OpenRouter 聚合',base:'https://openrouter.ai/api/v1',models:['deepseek/deepseek-chat'],tip:'openrouter.ai 一个 Key 用多家模型'},
+  {id:'ollama',name:'Ollama 本地模型',base:'http://localhost:11434/v1',models:['qwen2.5:14b','deepseek-r1:14b'],tip:'需先设环境变量 OLLAMA_ORIGINS=* 再启动 Ollama，无需 Key'},
+  {id:'custom',name:'自定义（任意 OpenAI 兼容）',base:'',models:[],tip:'填入任意兼容 /chat/completions 的地址'}
+];
+const CFG_KEY='wxcs_cfg_v1',SAVES_KEY='wxcs_saves_v1',CUR_KEY='wxcs_current_v1';
+function loadCfg(){
+  const base={provider:'deepseek',base:'https://api.deepseek.com/v1',key:'',model:'deepseek-chat',temp:1.0,maxTokens:4096,extraRules:''};
+  try{return Object.assign(base,JSON.parse(localStorage.getItem(CFG_KEY)||'{}'));}catch(e){return base;}
+}
+let cfg=loadCfg();
+function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg));}catch(e){}}
+
+/* ================= 天道引擎文本 ================= */
+const SYS_PROMPT=document.getElementById('sysPrompt').textContent.trim();
+const ZHOU_ARCHIVE=document.getElementById('zhouArchive').textContent.trim();
+const BOOT_ZHOU=document.getElementById('bootZhou').textContent.trim();
+const BOOT_NEW=document.getElementById('bootNew').textContent.trim();
+
+/* ================= 游戏状态 ================= */
+let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',busy:false};
+const HIST_WINDOW=24;
+let summarizing=false;
+
+/* ================= 协议解析 ================= */
+function parseReply(text){
+  const out={time:'',narr:[],panels:[],options:[],state:{},rolls:[],raw:text};
+  let cur=null;
+  const lines=String(text||'').split(/\r?\n/);
+  for(let li=0;li<lines.length;li++){
+    const line=lines[li].trim();if(!line)continue;
+    if(line.charAt(0)==='◆'){
+      const body=line.replace(/^◆\s*/,'');
+      const parts=body.split('|').map(s=>s.trim());
+      const t=parts[0];
+      if(t==='时间'){out.time=parts.slice(1).join('|');}
+      else if(t==='旁白'){out.narr.push({text:parts.slice(1).join('|')});}
+      else if(t==='面板'){
+        cur={标题:'',主题:'',items:[]};
+        for(let i=1;i<parts.length;i++){
+          const eq=parts[i].indexOf('=');
+          if(eq>0)cur[parts[i].slice(0,eq)]=parts[i].slice(eq+1);
+        }
+        out.panels.push(cur);
+      }
+      else if(t==='/面板'||t==='面板结束'){cur=null;}
+      else if(t==='行'&&cur){cur.items.push({t:'行',text:parts.slice(1).join('|')});}
+      else if(t==='强调'&&cur){cur.items.push({t:'强调',text:parts.slice(1).join('|')});}
+      else if(t==='注'&&cur){cur.items.push({t:'注',text:parts.slice(1).join('|')});}
+      else if(t==='分隔'&&cur){cur.items.push({t:'分隔'});}
+      else if(t==='五行'&&cur){cur.items.push({t:'五行',text:parts.slice(1).join('|')});}
+      else if(t==='键值'&&cur){cur.items.push({t:'键值',k:parts[1]||'',v:parts.slice(2).join('|')});}
+      else if(t==='条'&&cur){
+        cur.items.push({t:'条',label:parts[1]||'',cur:parseFloat(parts[2])||0,max:parseFloat(parts[3])||100,type:parts[4]||''});
+      }
+      else if(t==='判定'){
+        const txt=parts.slice(1).join('|');out.rolls.push(txt);
+        if(cur)cur.items.push({t:'判定',text:txt});
+      }
+      else if(t==='选项'){out.options.push({tag:parts[1]||'',text:parts.slice(2).join('|')});}
+      else if(t==='状态'){
+        for(let i=1;i<parts.length;i++){
+          const eq=parts[i].indexOf('=');
+          if(eq>0)out.state[parts[i].slice(0,eq).trim()]=parts[i].slice(eq+1).trim();
+        }
+      }
+    }else{
+      out.narr.push({text:line});
+    }
+  }
+  return out;
+}
+
+/* ================= 渲染 ================= */
+function elChips(text){
+  const s=String(text||'');const out=[];
+  for(const ch of s){if(ELS[ch])out.push(h('span',{class:'elchip',style:'background:'+ELS[ch]},ch));}
+  return out;
+}
+function elsOnly(s){
+  const t=String(s||'').replace(/[\s,，、·|/（）()]/g,'');
+  return t&&t.length<=6&&Array.from(t).every(c=>ELS[c]);
+}
+function barEl(label,cur,max,type){
+  cur=Number(cur)||0;max=Number(max)||100;
+  if(max<=0)max=100;
+  const pct=Math.max(0,Math.min(100,cur/max*100));
+  const color=BARC[type]||'#C9A45C';
+  return h('div',{class:'bar'},
+    h('span',{class:'bar-label'},label||''),
+    h('span',{class:'bar-track'},h('span',{class:'bar-fill',style:'width:'+pct.toFixed(1)+'%;background:'+color})),
+    h('span',{class:'bar-val'},(Math.round(cur*10)/10)+'/'+(Math.round(max*10)/10)));
+}
+function renderPanel(p){
+  const c=THEMES[p['主题']]||'#8C8578';
+  const d=h('div',{class:'xpanel'});d.style.setProperty('--pc',c);
+  d.append(h('div',{class:'xp-title'},p['标题']||''));
+  (p.items||[]).forEach(it=>{
+    if(it.t==='行')d.append(h('div',{class:'xp-row'},it.text));
+    else if(it.t==='强调')d.append(h('div',{class:'xp-row strong'},it.text));
+    else if(it.t==='注')d.append(h('div',{class:'xp-note'},it.text));
+    else if(it.t==='分隔')d.append(h('hr',{class:'xp-sep'}));
+    else if(it.t==='判定')d.append(h('div',{class:'roll'},'⟐ '+it.text));
+    else if(it.t==='五行'){
+      const chips=elChips(it.text);
+      d.append(chips.length?h('div',{class:'xp-row els'},...chips):h('div',{class:'xp-note'},it.text));
+    }
+    else if(it.t==='键值')d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},it.k),h('span',{class:'kv-v'},it.v)));
+    else if(it.t==='条')d.append(barEl(it.label,it.cur,it.max,it.type));
+  });
+  return d;
+}
+function favTiers(s){
+  return String(s||'').split(/[·,，、;；]/).map(x=>x.trim()).filter(Boolean).map(x=>{
+    const m=x.match(/^(.*?)(\d+(?:\.\d+)?)$/);
+    return m?{name:m[1].trim(),v:parseFloat(m[2])}:null;
+  }).filter(Boolean);
+}
+function favColor(v){if(v>=200)return '#C05F55';if(v>=100)return '#D88FA5';if(v>=60)return '#C9A45C';if(v>=40)return '#7FA8C9';return '#8C8578';}
+function parsePair(s){
+  const m=String(s||'').match(/(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)/);
+  return m?[parseFloat(m[1]),parseFloat(m[2])]:null;
+}
+function statusCard(st){
+  const d=h('div',{class:'xpanel statuscard'});d.style.setProperty('--pc','#6FA698');
+  d.append(h('div',{class:'xp-title'},'状态卡 · '+(st['时间']||'')));
+  const nameLine=[st['姓名']||'无名'];
+  if(st['道号']&&st['道号']!=='无')nameLine.push('道号 '+st['道号']);
+  if(st['外号']&&st['外号']!=='无')nameLine.push('「'+st['外号']+'」');
+  nameLine.push((st['性别']||'')+' · '+(st['年龄']||'?')+'岁');
+  d.append(h('div',{class:'xp-row strong'},nameLine.join(' · ')));
+  if(st['境界'])d.append(h('div',{class:'xp-row'},'境界 '+st['境界']+(st['宗门']?' · '+st['宗门']:'')));
+  const rw=parsePair(st['修为']);if(rw)d.append(barEl('修为',rw[0],rw[1],'修为'));
+  if(st['六维'])d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'六维'),h('span',{class:'kv-v'},st['六维'])));
+  const meta=[];if(st['仙姿'])meta.push('仙姿 '+st['仙姿']);
+  if(meta.length)d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'禀赋'),h('span',{class:'kv-v'},meta.join(' · '))));
+  if(st['灵根']){
+    if(elsOnly(st['灵根']))d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'灵根'),h('span',{class:'kv-v els'},...elChips(st['灵根']))));
+    else d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'灵根'),h('span',{class:'kv-v'},st['灵根'])));
+  }
+  const hp=parsePair(st['气血']);if(hp)d.append(barEl('气血',hp[0],hp[1],'气血'));
+  const mp=parsePair(st['灵力']);if(mp)d.append(barEl('灵力',mp[0],mp[1],'灵力'));
+  const sl=parsePair(st['寿元']);if(sl)d.append(barEl('寿元',sl[0],sl[1],'寿元'));
+  const res=[];
+  if(st['灵石']!=null&&st['灵石']!=='')res.push('灵石 '+st['灵石']);
+  if(st['功德']!=null&&st['功德']!=='')res.push('功德 '+st['功德']);
+  if(st['业力']!=null&&st['业力']!=='')res.push('业力 '+st['业力']);
+  if(res.length)d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'资财'),h('span',{class:'kv-v'},res.join(' · '))));
+  if(st['异常']&&st['异常']!=='无')d.append(h('div',{class:'xp-row strong alert'},'异常 · '+st['异常']));
+  if(st['地点'])d.append(h('div',{class:'xp-note'},'所在 '+st['地点']+(st['时间']?' · '+st['时间']:'')));
+  const favs=favTiers(st['好感']);
+  if(favs.length){
+    const fw=h('div',{class:'favwrap'});
+    favs.forEach(f=>{const c=favColor(f.v);const s=h('span',{class:'fav'},f.name+' '+f.v);s.style.setProperty('--fc',c);fw.append(s);});
+    d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'好感'),fw));
+  }
+  if(st['主线'])d.append(h('div',{class:'xp-note'},'主线 · '+st['主线']));
+  return d;
+}
+function renderTurn(parsed,past){
+  const turn=h('div',{class:'turn'+(past?' past':'')});
+  if(parsed.time)turn.append(h('div',{class:'turn-date'},parsed.time));
+  parsed.narr.forEach(n=>turn.append(h('p',{class:'narr'},n.text)));
+  parsed.panels.forEach(p=>turn.append(renderPanel(p)));
+  parsed.rolls.forEach(r=>{if(!parsed.panels.some(p=>(p.items||[]).some(it=>it.t==='判定'&&it.text===r)))turn.append(h('div',{class:'roll'},'⟐ '+r));});
+  if(Object.keys(parsed.state).length)turn.append(statusCard(parsed.state));
+  if(parsed.options.length){
+    const opts=h('div',{class:'opts'});
+    parsed.options.forEach((o,i)=>{
+      const c=TAGS[o.tag]||'#8C8578';
+      const letter=h('span',{class:'opt-letter'},'ABCDE'[i]||'·');letter.style.setProperty('--lc',c);
+      const btn=h('button',{class:'opt-btn',type:'button'},
+        letter,
+        o.tag?h('span',{class:'opt-tag',style:'background:'+c},o.tag):null,
+        h('span',{class:'opt-text'},o.text));
+      btn.style.borderColor=c;
+      btn.addEventListener('click',()=>{
+        if(G.busy||btn.disabled)return;
+        opts.querySelectorAll('button').forEach(b=>{b.disabled=true;});
+        btn.classList.add('chosen');btn.disabled=true;
+        sendPlayerInput(o.text);
+      });
+      if(past)btn.disabled=true;
+      opts.append(btn);
+    });
+    turn.append(opts);
+    turn.append(h('div',{class:'freehint'},'—— 也可在下方输入框自由输入任何行动 ——'));
+  }
+  document.getElementById('storyArea').append(turn);
+  scrollBottom();
+  return turn;
+}
+function appendUserMsg(text){
+  document.getElementById('storyArea').append(h('div',{class:'msg-wrap user'},h('div',{class:'msg-user'},text)));
+  scrollBottom();
+}
+function scrollBottom(force){
+  const w=document.getElementById('storyWrap');
+  if(!w)return;
+  const near=w.scrollHeight-w.scrollTop-w.clientHeight<180;
+  if(force||near)w.scrollTop=w.scrollHeight;
+}
+function renderSidebar(){
+  const c=document.getElementById('sideStatus');c.innerHTML='';
+  if(G.state&&Object.keys(G.state).length)c.append(statusCard(G.state));
+  else c.append(h('div',{class:'side-note'},'尚无状态。开始游戏后，此处实时显示状态卡。'));
+  updateTurnLabel();
+}
+function updateTurnLabel(){
+  document.getElementById('tbTurn').textContent=G.turn?('第 '+G.turn+' 回'):'';
+}
+
+/* ================= 流式输出框 ================= */
+function addStreamingBox(){
+  const pre=h('pre',{class:'stream-pre'});
+  const box=h('div',{class:'turn streaming'},
+    h('div',{class:'stream-head'},h('span',{class:'candle'}),'天道推演中……'),pre);
+  document.getElementById('storyArea').append(box);scrollBottom(true);
+  return {
+    box,
+    update(full){pre.textContent=full.length>6000?full.slice(-6000):full;scrollBottom(false);},
+    error(msg){
+      box.classList.add('err');box.classList.remove('streaming');box.innerHTML='';
+      const t=h('div',{class:'xp-title'},'天道受阻');t.style.setProperty('--pc','#C05F55');
+      const retry=h('button',{class:'opt-btn',type:'button'},'重试推演');retry.style.borderColor='#C05F55';
+      const help=h('button',{class:'opt-btn',type:'button'},'查看排障帮助');help.style.borderColor='#7FA8C9';
+      retry.addEventListener('click',()=>{box.remove();runTurn();});
+      help.addEventListener('click',()=>openHelp('api'));
+      box.append(t,h('div',{class:'xp-row'},msg),h('div',{class:'opts'},retry,help));
+      scrollBottom(true);
+    },
+    remove(){box.remove();}
+  };
+}
+
+/* ================= API 调用（OpenAI 兼容 · 流式） ================= */
+async function callAI(messages,opt){
+  opt=opt||{};
+  const base=String(cfg.base||'').replace(/\/+$/,'');
+  if(!base)throw new Error('未配置 API 地址，请先在「设置」中配置服务商与地址');
+  if(!cfg.model)throw new Error('未配置模型名，请先在「设置」中填写');
+  const body={model:cfg.model,messages:messages,max_tokens:Number(cfg.maxTokens)||4096,stream:true};
+  if(!/reasoner|r1/i.test(cfg.model))body.temperature=Number(cfg.temp)||1.0;
+  const headers={'Content-Type':'application/json'};
+  if(cfg.key)headers['Authorization']='Bearer '+cfg.key;
+  if(/openrouter/i.test(base)){headers['HTTP-Referer']='https://wendao-changsheng.local';headers['X-Title']='问道长生';}
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),opt.timeoutMs||300000);
+  let res;
+  try{
+    res=await fetch(base+'/chat/completions',{method:'POST',signal:ctrl.signal,headers:headers,body:JSON.stringify(body)});
+  }catch(e){
+    throw new Error('网络请求失败：'+(e.name==='AbortError'?'超时（模型推演过久）':e.message)+'。若用本地模型请检查地址与跨域（OLLAMA_ORIGINS）设置。');
+  }finally{clearTimeout(timer);}
+  if(!res.ok){
+    const t=await res.text().catch(()=>'');
+    let hint='';
+    if(res.status===401)hint='（密钥无效或未填）';
+    if(res.status===402)hint='（余额不足）';
+    if(res.status===429)hint='（请求过频，稍等再试）';
+    throw new Error('API 返回 '+res.status+hint+'：'+t.slice(0,260));
+  }
+  const reader=res.body.getReader();const dec=new TextDecoder('utf-8');
+  let buf='',full='';
+  while(true){
+    const r=await reader.read();if(r.done)break;
+    buf+=dec.decode(r.value,{stream:true});
+    let i;
+    while((i=buf.indexOf('\n'))>=0){
+      const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+      if(!line.startsWith('data:'))continue;
+      const data=line.slice(5).trim();
+      if(!data||data==='[DONE]')continue;
+      try{
+        const j=JSON.parse(data);
+        const d=(j.choices&&j.choices[0]&&j.choices[0].delta)||{};
+        const t=d.content||'';
+        if(t){full+=t;if(opt.onDelta)opt.onDelta(t,full);}
+      }catch(e){}
+    }
+  }
+  if(!full.trim())throw new Error('模型未返回内容（可能被截断或接口异常），请重试或换模型');
+  return full;
+}
+
+/* ================= 消息组装 ================= */
+function buildMessages(){
+  const m=[{role:'system',content:SYS_PROMPT+(cfg.extraRules?'\n\n【玩家追加规则 · 同样必须遵守】\n'+cfg.extraRules:'')}];
+  if(G.worldArchive)m.push({role:'system',content:'【世界档案 · 玩家设定，最高优先级】\n'+G.worldArchive});
+  if(G.memory)m.push({role:'system',content:'【天道备忘录 · 此前长线剧情已压缩于此】\n'+G.memory});
+  if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略，请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
+  m.push.apply(m,G.history.slice(-HIST_WINDOW));
+  return m;
+}
+
+/* ================= 回合流转 ================= */
+async function sendPlayerInput(text){
+  text=String(text||'').trim();
+  if(!text||G.busy)return;
+  appendUserMsg(text);
+  G.history.push({role:'user',content:text});
+  await runTurn();
+}
+async function runTurn(){
+  if(G.busy)return;
+  G.busy=true;setBusy(true);
+  const sb=addStreamingBox();
+  try{
+    const reply=await callAI(buildMessages(),{onDelta:(d,full)=>sb.update(full)});
+    sb.remove();
+    const parsed=parseReply(reply);
+    renderTurn(parsed,false);
+    G.history.push({role:'assistant',content:reply});
+    if(Object.keys(parsed.state).length){G.state=parsed.state;renderSidebar();}
+    G.turn=G.history.filter(m=>m.role==='assistant').length;
+    updateTurnLabel();
+    autosave();
+    maybeSummary();
+  }catch(e){
+    sb.error(e.message||String(e));
+  }finally{
+    G.busy=false;setBusy(false);
+  }
+}
+function regenLast(){
+  if(G.busy){toast('天道推演中，请稍候');return;}
+  if(!G.history.length||G.history[G.history.length-1].role!=='assistant'){toast('没有可重演的回合');return;}
+  G.history.pop();
+  const turns=$$('#storyArea .turn');
+  for(let i=turns.length-1;i>=0;i--){
+    if(!turns[i].classList.contains('streaming')){turns[i].remove();break;}
+  }
+  runTurn();
+}
+function setBusy(b){
+  const btn=document.getElementById('sendBtn');
+  btn.disabled=b;btn.textContent=b?'推演中':'出 手';
+  $$('#inputChips .chip').forEach(c=>c.disabled=b);
+}
+
+/* ================= 长线记忆压缩 ================= */
+function maybeSummary(){
+  const n=G.history.filter(m=>m.role==='assistant').length;
+  if(n>0&&n%20===0)doSummary();
+}
+async function forceSummary(){
+  if(G.busy){toast('请等本回合结束');return;}
+  if(summarizing){toast('正在压缩中……');return;}
+  toast('正在压缩长线记忆……');
+  await doSummary();
+}
+async function doSummary(){
+  if(summarizing)return;summarizing=true;
+  try{
+    const msgs=[{role:'system',content:'你是存档压缩系统。请把下面的游戏对话压缩为「天道备忘录」：按时间顺序列出主线大事、NPC关系与好感变化、重大数值变动、未解伏笔与待办。15行以内，纯文本，不要任何◆标记与多余解释。'},
+      ...G.history.slice(-40)];
+    const s=await callAI(msgs,{timeoutMs:180000});
+    G.memory=s.replace(/^◆.*$/gm,'').trim();
+    autosave();
+    toast('长线记忆已更新');
+  }catch(e){toast('压缩失败：'+(e.message||e));}
+  summarizing=false;
+}
+
+/* ================= 存档 ================= */
+function loadSaves(){
+  try{return JSON.parse(localStorage.getItem(SAVES_KEY)||'[]');}catch(e){return[];}
+}
+function autosave(){
+  if(!G.mode)return;
+  if(!G.saveId)G.saveId='save_'+Date.now();
+  const list=loadSaves();
+  const entry={id:G.saveId,ts:Date.now(),mode:G.mode,turn:G.turn,state:G.state,
+    memory:G.memory,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
+  const i=list.findIndex(x=>x.id===entry.id);
+  if(i>=0)list[i]=entry;else list.unshift(entry);
+  while(list.length>12)list.pop();
+  try{
+    localStorage.setItem(SAVES_KEY,JSON.stringify(list));
+    localStorage.setItem(CUR_KEY,entry.id);
+  }catch(e){
+    try{localStorage.setItem(SAVES_KEY,JSON.stringify(list.slice(0,4)));}catch(e2){}
+  }
+}
+function trimHistoryForSave(hist){
+  if(!hist||hist.length<=170)return hist;
+  return [].concat(hist.slice(0,2),[{role:'user',content:'（中段历史已省略，见天道备忘录）'}],hist.slice(-150));
+}
+function delSave(id){
+  const list=loadSaves().filter(x=>x.id!==id);
+  localStorage.setItem(SAVES_KEY,JSON.stringify(list));
+  if(localStorage.getItem(CUR_KEY)===id)localStorage.removeItem(CUR_KEY);
+}
+function loadGame(id){
+  const sv=loadSaves().find(x=>x.id===id);
+  if(!sv){toast('存档不存在');return;}
+  G={mode:sv.mode,saveId:sv.id,turn:sv.turn||0,history:sv.history||[],state:sv.state||{},
+    worldArchive:sv.worldArchive||'',memory:sv.memory||'',busy:false};
+  enterGame(sv.mode==='zhou'?'周子清线':'新仙途');
+  (G.history||[]).forEach(m=>{
+    if(m.role==='user')appendUserMsg(m.content);
+    else if(m.role==='assistant')renderTurn(parseReply(m.content),true);
+  });
+  renderSidebar();scrollBottom(false);
+  toast('已读取存档 · 第 '+G.turn+' 回');
+}
+function downloadFile(name,content,mime){
+  const blob=new Blob([content],{type:mime||'application/octet-stream'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.append(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+}
+function downloadJSON(sv){
+  downloadFile('问道长生存档_'+sv.turn+'回_'+new Date(sv.ts).toISOString().slice(0,10)+'.json',
+    JSON.stringify(sv,null,2),'application/json');
+}
+function importFile(){
+  const inp=h('input',{type:'file',accept:'.json,application/json'});
+  inp.addEventListener('change',()=>{
+    const f=inp.files&&inp.files[0];if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{
+      try{
+        const sv=JSON.parse(r.result);
+        if(!sv||!Array.isArray(sv.history)||!sv.id)throw new Error('格式不对');
+        const list=loadSaves();
+        if(!list.some(x=>x.id===sv.id))list.unshift(sv);
+        localStorage.setItem(SAVES_KEY,JSON.stringify(list));
+        toast('导入成功');openSaves();
+      }catch(e){toast('导入失败：'+(e.message||e));}
+    };
+    r.readAsText(f,'utf-8');
+  });
+  inp.click();
+}
+function exportTranscript(){
+  if(!G.history.length){toast('暂无剧情');return;}
+  const lines=['《问道长生》剧情记录 · 导出于 '+new Date().toLocaleString('zh-CN'),''];
+  G.history.forEach(m=>{
+    lines.push(m.role==='user'?'【你】 '+m.content:'【天道】\n'+m.content);
+    lines.push('');
+  });
+  downloadFile('问道长生剧情_'+G.turn+'回.txt',lines.join('\n'),'text/plain;charset=utf-8');
+}
+
+/* ================= 界面切换 ================= */
+function showScreen(n){
+  ['setup','title','game'].forEach(x=>document.getElementById(x+'Screen').classList.toggle('hidden',x!==n));
+  window.scrollTo(0,0);
+}
+function enterGame(badge){
+  document.getElementById('tbBadge').textContent=badge||'';
+  document.getElementById('storyArea').innerHTML='';
+  showScreen('game');
+  renderSidebar();
+  document.body.classList.remove('side-open');
+}
+function startZhou(){
+  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',busy:false};
+  enterGame('周子清 · 天玄历387年冬');
+  G.history.push({role:'user',content:BOOT_ZHOU});
+  autosave();
+  runTurn();
+}
+function startNew(){
+  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',busy:false};
+  enterGame('新仙途 · 创角');
+  G.history.push({role:'user',content:BOOT_NEW});
+  autosave();
+  runTurn();
+}
+
+/* ================= 弹窗 ================= */
+function closeModal(){
+  const r=document.getElementById('modalRoot');
+  r.classList.remove('show');r.innerHTML='';
+}
+function openModal(title,node){
+  const r=document.getElementById('modalRoot');r.innerHTML='';
+  const card=h('div',{class:'modal-card'});
+  const close=h('button',{class:'ghost-btn modal-close',type:'button'},'关闭');
+  close.addEventListener('click',closeModal);
+  card.append(close,h('div',{class:'modal-title'},title),node);
+  const ov=h('div',{class:'modal-overlay'},card);
+  ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+  r.append(ov);r.classList.add('show');
+}
+function openHelp(focusApi){
+  const html=
+  '<div class="help-sec"><b>玩法</b>'+
+  '<p>点击选项按钮，或在输入框打字自由行动（夜探、偷师、摆摊坑人、给师兄递情蛊皆可）。每回合推进一个节点；状态卡每回合自动更新并自动存档；快捷指令点击即发送。剧情不满意可点「重演上回」重新推演。</p></div>'+
+  '<div class="help-sec"><b>API 配置（三步开始）</b>'+
+  '<p>1. 注册推荐服务商：DeepSeek（platform.deepseek.com）→ 充值几元 → 创建 API Key。<br>2. 点右上「设置」，选服务商、粘贴 Key、确认模型名（deepseek-chat）。<br>3. 点「测试连接」，成功后回标题页开局。</p>'+
+  '<p>密钥只保存在本机浏览器 localStorage，请求直连你所选服务商，不经任何第三方。支持任意 OpenAI 兼容接口（Kimi／通义／智谱／OpenRouter／本地 Ollama）。</p></div>'+
+  '<div class="help-sec"><b>常见故障</b>'+
+  '<p>· 401 密钥错／未填；402 余额不足；429 请求过频稍等再试。<br>· 跨域(CORS)报错：DeepSeek／Kimi／通义／OpenRouter 均支持浏览器直连；本地 Ollama 需先设环境变量 OLLAMA_ORIGINS=* 再启动。<br>· deepseek-reasoner 推演慢属正常，等待即可。<br>· 长对话遗忘：每 20 回自动压缩「天道备忘录」，也可在存档管理手动压缩。</p></div>'+
+  '<div class="help-sec"><b>存档</b>'+
+  '<p>每回合自动存入浏览器（最多 12 个档位）。存档管理可导出 JSON 备份、导入、删除；「导出剧情」生成纯文本。换浏览器或换电脑时，用导出／导入搬迁。</p></div>'+
+  '<div class="help-sec"><b>变成真网址分享</b>'+
+  '<p>本文件是单文件网页，可直接双击打开。想挂成链接：上传到 GitHub Pages／Netlify／或任意静态空间即可；也可局域网 python -m http.server 共享。</p></div>';
+  openModal('帮助 · 问道长生',h('div',{html:html}));
+}
+function openSaves(){
+  const list=loadSaves();
+  const box=h('div',{class:'saves-list'});
+  if(!list.length)box.append(h('div',{class:'side-note'},'暂无存档。开局后每回合自动保存。'));
+  list.forEach(sv=>{
+    const loadB=h('button',{class:'chip',type:'button'},'读取');
+    loadB.addEventListener('click',()=>{closeModal();loadGame(sv.id);});
+    const expB=h('button',{class:'chip',type:'button'},'导出');
+    expB.addEventListener('click',()=>downloadJSON(sv));
+    const delB=h('button',{class:'chip danger',type:'button'},'删除');
+    delB.addEventListener('click',()=>{if(confirm('删除该存档？')){delSave(sv.id);openSaves();}});
+    box.append(h('div',{class:'save-row'},
+      h('div',{class:'save-info'},
+        h('div',{class:'strong'},(sv.mode==='zhou'?'周子清线':'新仙途')+' · 第 '+(sv.turn||0)+' 回'),
+        h('div',{class:'xp-note'},new Date(sv.ts).toLocaleString('zh-CN'))),
+      h('div',{class:'save-ops'},loadB,expB,delB)));
+  });
+  const impB=h('button',{class:'chip',type:'button'},'导入存档文件');impB.addEventListener('click',importFile);
+  const trB=h('button',{class:'chip',type:'button'},'导出当前剧情');trB.addEventListener('click',exportTranscript);
+  const memB=h('button',{class:'chip',type:'button'},'立即压缩长线记忆');memB.addEventListener('click',forceSummary);
+  const homeB=h('button',{class:'chip',type:'button'},'返回标题页');homeB.addEventListener('click',()=>{closeModal();showScreen('title');});
+  openModal('存档 · 每回合自动保存',h('div',{},box,h('hr',{class:'xp-sep'}),h('div',{class:'chips'},impB,trB,memB,homeB)));
+}
+
+/* ================= 配置表单 ================= */
+function buildSetupForm(root,onDone){
+  root.innerHTML='';
+  const prov=PROVIDERS.find(p=>p.id===cfg.provider)||PROVIDERS[0];
+  const provWrap=h('div',{class:'prov-wrap'});
+  PROVIDERS.forEach(p=>{
+    const b=h('button',{class:'prov-chip'+(cfg.provider===p.id?' on':''),type:'button'},p.name);
+    b.addEventListener('click',()=>{
+      cfg.provider=p.id;
+      if(p.base)cfg.base=p.base;
+      if(p.models&&p.models.length)cfg.model=p.models[0];
+      saveCfg();buildSetupForm(root,onDone);
+    });
+    provWrap.append(b);
+  });
+  const fBase=h('input',{class:'inp',value:cfg.base,placeholder:'https://api.deepseek.com/v1'});
+  const fKey=h('input',{class:'inp',type:'password',value:cfg.key,placeholder:'sk-…（仅保存在本机浏览器）'});
+  const fModel=h('input',{class:'inp',value:cfg.model,placeholder:'deepseek-chat',list:'modelList'});
+  const dl=h('datalist',{id:'modelList'});
+  (prov.models||[]).forEach(m=>dl.append(h('option',{value:m})));
+  const fTemp=h('input',{class:'inp',type:'range',min:'0.1',max:'1.5',step:'0.05',value:String(cfg.temp)});
+  const tempVal=h('span',{class:'xp-note'},' 当前 '+cfg.temp+'（低更稳，高更野）');
+  fTemp.addEventListener('input',()=>{tempVal.textContent=' 当前 '+fTemp.value+'（低更稳，高更野）';});
+  const fRules=h('textarea',{class:'inp',rows:'3',placeholder:'可选：追加你自己的规则，会并入天道系统（例：每月自动吸收灵木精华；好感用千分制；战斗更残酷…）'});
+  fRules.value=cfg.extraRules||'';
+  const status=h('div',{class:'setup-status'},prov.tip||'');
+  function collect(){
+    cfg.base=fBase.value.trim();cfg.key=fKey.value.trim();cfg.model=fModel.value.trim();
+    cfg.temp=parseFloat(fTemp.value)||1.0;cfg.extraRules=fRules.value.trim();
+  }
+  const testB=h('button',{class:'ghost-btn',type:'button'},'测试连接');
+  testB.addEventListener('click',async()=>{
+    collect();
+    if(!cfg.base||!cfg.model){status.textContent='请先填写 API 地址与模型名';return;}
+    saveCfg();testB.disabled=true;status.textContent='正在连接……';
+    try{
+      const r=await callAI([{role:'user',content:'请只回复两个字：连通'}],{timeoutMs:90000});
+      status.textContent='连接成功：'+String(r).trim().slice(0,24);
+    }catch(e){status.textContent='失败：'+(e.message||e);}
+    testB.disabled=false;
+  });
+  const saveB=h('button',{class:'primary-btn',type:'button'},onDone?'保存设置':'保存并进入');
+  saveB.addEventListener('click',()=>{
+    collect();
+    if(!cfg.base||!cfg.model){status.textContent='请先填写 API 地址与模型名';return;}
+    saveCfg();
+    if(onDone)onDone();else showScreen('title');
+  });
+  root.append(
+    h('h2',{},'天道连接 · 选择你的推演引擎'),
+    provWrap,
+    h('div',{class:'fld'},h('label',{},'API 地址（OpenAI 兼容）'),fBase,dl),
+    h('div',{class:'fld'},h('label',{},'API Key（Ollama 本地可留空）'),fKey),
+    h('div',{class:'fld'},h('label',{},'模型名'),fModel),
+    h('div',{class:'fld'},h('label',{},'灵机（temperature）'),fTemp,tempVal),
+    h('div',{class:'fld'},h('label',{},'追加规则（可选）'),fRules),
+    status,
+    h('div',{class:'btn-row'},testB,saveB));
+}
+
+/* ================= 初始化 ================= */
+function spawnMotes(n){
+  const box=document.getElementById('motes');if(!box)return;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('span');
+    s.style.left=(Math.random()*100).toFixed(1)+'%';
+    s.style.animationDuration=(14+Math.random()*18).toFixed(1)+'s';
+    s.style.animationDelay=(-Math.random()*20).toFixed(1)+'s';
+    const sc=(0.5+Math.random()).toFixed(2);
+    s.style.width=s.style.height=(4+Math.random()*5).toFixed(0)+'px';
+    s.style.transform='scale('+sc+')';
+    box.append(s);
+  }
+}
+let toastTimer=null;
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=h('div',{id:'toast'});document.body.append(t);}
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function fitBox(){
+  const b=document.getElementById('inputBox');
+  b.style.height='auto';b.style.height=Math.min(140,b.scrollHeight)+'px';
+}
+function submitInput(){
+  const box=document.getElementById('inputBox');
+  const v=box.value.trim();
+  if(!v)return;
+  if(G.busy){toast('天道推演中，请稍候');return;}
+  box.value='';fitBox();
+  sendPlayerInput(v);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  buildSetupForm(document.getElementById('setupCard'));
+  spawnMotes(14);
+  const chipsBox=document.getElementById('inputChips');
+  QUICK.forEach(q=>{
+    const c=h('button',{class:'chip',type:'button'},q);
+    c.addEventListener('click',()=>{if(!G.busy)sendPlayerInput(q);});
+    chipsBox.append(c);
+  });
+  document.getElementById('btnZhou').addEventListener('click',startZhou);
+  document.getElementById('btnNew').addEventListener('click',startNew);
+  document.getElementById('btnLoad').addEventListener('click',openSaves);
+  const cur=localStorage.getItem(CUR_KEY);
+  const sv=cur&&loadSaves().find(x=>x.id===cur);
+  if(sv){
+    const rb=document.getElementById('btnResume');
+    rb.textContent='继续上次 · '+(sv.mode==='zhou'?'周子清线':'新仙途')+' 第 '+(sv.turn||0)+' 回';
+    rb.classList.remove('hidden');
+    rb.addEventListener('click',()=>loadGame(sv.id));
+  }
+  document.getElementById('tbSaves').addEventListener('click',openSaves);
+  document.getElementById('sideSaves').addEventListener('click',openSaves);
+  document.getElementById('sideExport').addEventListener('click',exportTranscript);
+  document.getElementById('sideHome').addEventListener('click',()=>showScreen('title'));
+  document.getElementById('tbSettings').addEventListener('click',()=>{
+    const node=h('div',{});
+    buildSetupForm(node,()=>{toast('设置已保存');closeModal();});
+    openModal('设置 · 天道连接',node);
+  });
+  document.getElementById('tbHelp').addEventListener('click',()=>openHelp());
+  document.getElementById('tbRegen').addEventListener('click',regenLast);
+  document.getElementById('tbStatus').addEventListener('click',()=>document.body.classList.toggle('side-open'));
+  document.getElementById('sideOverlay').addEventListener('click',()=>document.body.classList.remove('side-open'));
+  const box=document.getElementById('inputBox');
+  box.addEventListener('input',fitBox);
+  box.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();submitInput();}
+  });
+  document.getElementById('sendBtn').addEventListener('click',submitInput);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  if(cfg.base&&cfg.model)showScreen('title');
+});
+</script>
+</body>
+</html>
