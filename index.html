@@ -36,6 +36,8 @@ button{font-family:inherit}
   animation:rise linear infinite;opacity:0;
 }
 @keyframes rise{0%{transform:translateY(0);opacity:0}12%{opacity:.7}100%{transform:translateY(-108vh);opacity:0}}
+#sceneTint{position:absolute;inset:0;opacity:0;transition:opacity 1.1s ease;pointer-events:none}
+body[data-scene] #sceneTint{opacity:1}
 
 /* ---------- 灯笼 ---------- */
 .lantern{width:52px;height:72px;border-radius:46%/40%;position:relative;margin:6px auto 2px;
@@ -150,6 +152,8 @@ textarea.inp{resize:vertical;line-height:1.6}
 .turn.past{animation:none;opacity:.96}
 .turn-date{font-family:var(--font-kai);color:#8a6d3b;letter-spacing:.1em;font-size:15px;
   border-left:3px solid var(--gold);padding-left:10px;margin-bottom:10px}
+.scene-chip{display:inline-block;font-size:12px;color:#fff;border-radius:5px;padding:1px 9px;
+  letter-spacing:.14em;margin-left:9px;vertical-align:1px;box-shadow:inset 0 -1px 2px rgba(0,0,0,.2)}
 .narr{text-indent:2em;margin:9px 0;color:var(--ink)}
 .roll{font-size:13.5px;color:#8a6d3b;margin:7px 0;font-family:var(--font-kai)}
 
@@ -238,6 +242,24 @@ textarea.inp{resize:vertical;line-height:1.6}
   opacity:0;pointer-events:none;transition:all .25s;z-index:120;letter-spacing:.05em;max-width:88vw}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ---------- 场景氛围（随 ◆场景 自动切换） ---------- */
+body[data-scene="战斗"]{--sc:#c25b4f;--sc2:#a03b2f}
+body[data-scene="秘境"]{--sc:#9a7fd0;--sc2:#7b5fb0}
+body[data-scene="坊市"]{--sc:#bd9643;--sc2:#96742e}
+body[data-scene="宗门"]{--sc:#6f9bc4;--sc2:#4f7ba6}
+body[data-scene="洞府"]{--sc:#5f9c8c;--sc2:#3f7c6c}
+body[data-scene="修炼"]{--sc:#79b392;--sc2:#548f6c}
+body[data-scene="情缘"]{--sc:#cf7f9a;--sc2:#b25f7d}
+body[data-scene="渡劫"]{--sc:#7c5fa6;--sc2:#5b3f85}
+body[data-scene="探索"]{--sc:#a3813f;--sc2:#7c6030}
+body[data-scene="赶路"]{--sc:#8f887a;--sc2:#6e675c}
+body[data-scene] #topBar{border-bottom:1px solid var(--sc)}
+body[data-scene] .tb-badge{background:var(--sc)}
+body[data-scene] #sendBtn{background:linear-gradient(135deg,var(--sc),var(--sc2))}
+body[data-scene="战斗"] #topBar{animation:battlePulse 2.6s ease-in-out infinite}
+@keyframes battlePulse{0%,100%{box-shadow:inset 0 -3px 0 rgba(194,91,79,0)}50%{box-shadow:inset 0 -3px 0 rgba(194,91,79,.55)}}
+body[data-scene="渡劫"] #topBar{animation:none}
+
 /* ---------- 滚动条 ---------- */
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:#d8c9a3;border-radius:5px}
@@ -268,6 +290,7 @@ textarea.inp{resize:vertical;line-height:1.6}
     <path fill="#6FA698" opacity="0.10" d="M0,220 C120,160 220,240 340,190 C470,140 560,230 700,180 C850,130 940,220 1080,170 C1200,130 1320,210 1440,160 L1440,320 L0,320 Z"/>
     <path fill="#5E8FAE" opacity="0.08" d="M0,260 C160,220 260,280 420,240 C600,200 700,270 880,230 C1050,195 1180,260 1440,210 L1440,320 L0,320 Z"/>
   </svg>
+  <div id="sceneTint"></div>
   <div class="motes" id="motes"></div>
 </div>
 
@@ -292,7 +315,7 @@ textarea.inp{resize:vertical;line-height:1.6}
     <button id="btnLoad" class="title-btn" type="button">读取 · 本地存档</button>
   </div>
   <div class="title-note">选项之外，可随时自由输入任何行动<br>每回合自动存档 · 长线剧情自动压缩记忆</div>
-  <div class="credit">作者 · 雾见川</div>
+  <div class="credit">作者 · 雾见川 · v1.1</div>
 </section>
 
 <!-- ========== 游戏页 ========== -->
@@ -344,7 +367,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 
 【一 · 输出协议（最高优先级，必须严格遵守）】
 你的回复会被网页解析渲染成面板，必须用「◆标记」逐行书写：
-1. 第一行必须是时间行：◆时间|天玄历387年 · 十一月初九 · 深夜（按当前剧情纪年如实写）
+1. 前两行固定：第一行时间行 ◆时间|天玄历387年 · 十一月初九 · 深夜（按当前剧情纪年如实写）；第二行场景行 ◆场景|类型（类型只能取：战斗、探索、秘境、坊市、宗门、洞府、情缘、修炼、渡劫、赶路，用于切换网页界面氛围，按本回合主场景选）
 2. 剧情正文：◆旁白|…… 每段一行，克制凝练（通常1~3段；战斗回合可稍多但仍须克制）
 3. 面板：以 ◆面板|标题=面板标题|主题=主题名 开始，以 ◆/面板 结束。主题只能取：修炼、战斗、情缘、机缘、坊市、宗门、悟道、渡劫、警告、状态。每回合面板1~3个为宜。
 4. 面板内部可用：
@@ -369,6 +392,7 @@ textarea.inp{resize:vertical;line-height:1.6}
 7. 除此之外不要输出任何多余文字。禁止 LaTeX、markdown、emoji、代码块。
 示例（格式参照，数值随剧情）：
 ◆时间|入道三年 · 五月
+◆场景|修炼
 ◆旁白|你于静室吐纳一月，丹田灵液微涨，窗外竹露未晞。
 ◆面板|标题=修炼 · 静室吐纳|主题=修炼
 ◆行|灵气 普通 · 功法《聚气诀》黄阶
@@ -394,6 +418,10 @@ textarea.inp{resize:vertical;line-height:1.6}
 4. 拜师、破境、结道侣、叛宗、杀人夺宝等重大事件只能以选项或玩家明示呈现，玩家选定后才写入剧情并结算。
 5. 信息尽量收进面板，旁白克制；能合并的面板绝不拆散。
 6. 玩家发送快捷指令（修炼/突破/悟道/洞府/地图/背包/坊市/宗门/技艺/情缘/对话/面板/帮助）时，用对应主题的信息面板回应，不推进大节点时间；发送「帮助」时输出指令大全面板，逐类列出指令能做什么。
+7. 探索收获铁律：任何寻物、探路、查案支线，连续「赶路、搜查」类节点最多2个，第3个节点必须落袋实质收获（战利品、功法、丹药、关键情报、身世真相、新NPC、灵石皆可），并在面板明示所得。线索本身必须附带收获，禁止「得到地图→到地→只得半张图→再去找下一地」式空转链。
+8. 战斗密度：玩家不在闭关、疗伤或明确安全期时，每2~3回合至少安排1场战斗或正面冲突（妖兽、仇家、伏击、护宝、切磋、魔修皆可）；探索高危地带优先触发遭遇战而非平安搜刮。战斗回合要给足敌情面板与出招空间，让玩家有操作感与紧张感。
+9. 纯赶路不单独成回合：用一段旁白直接带到抵达，除非途中有事件；回合要留给有冲突、有收获、有情感的事件。
+10. 若上下文含【天道备忘录】，其中已确立的剧情事实视同世界档案：不得矛盾、不得遗忘、不得改名换姓；引用时保持原名原说法。
 
 【三 · 数值铁律】
 1. 状态卡每回合更新；修为、气血、灵力、寿元、灵石、好感、功德、业力的一切变动必须有来源、逐回合连贯，不允许凭空变动。
@@ -621,6 +649,19 @@ const TAGS={'平和':'#6FA698','修炼':'#6FA698','机缘':'#A98FD9','风险':'#
 const ELS={'金':'#C9A45C','木':'#6BA38E','水':'#5E8FAE','火':'#C05F55','土':'#B08A4E','雷':'#8B6FA8','风':'#7F9C9C','冰':'#7FA8C9','阴':'#8E8578','阳':'#C9A45C'};
 const BARC={'气血':'#C05F55','灵力':'#5E8FAE','修为':'#A87E2E','寿元':'#5C8C6E','好感':'#D88FA5','灵石':'#A87E2E'};
 const QUICK=['修炼','突破','悟道','洞府','地图','背包','坊市','宗门','技艺','情缘','对话','帮助'];
+const SCENE_C={'战斗':'#C25B4F','探索':'#A3813F','秘境':'#9A7FD0','坊市':'#BD9643','宗门':'#6F9BC4','洞府':'#5F9C8C','情缘':'#CF7F9A','修炼':'#79B392','渡劫':'#7C5FA6','赶路':'#8F887A'};
+const SCENE_TINT={
+  '战斗':'radial-gradient(1100px 520px at 50% -8%, rgba(196,103,92,.20), transparent 65%), radial-gradient(700px 340px at 12% 108%, rgba(160,59,47,.14), transparent 60%)',
+  '探索':'radial-gradient(1100px 520px at 50% -8%, rgba(163,129,63,.16), transparent 65%), radial-gradient(700px 340px at 88% 106%, rgba(120,96,48,.12), transparent 60%)',
+  '秘境':'radial-gradient(1100px 520px at 55% -8%, rgba(154,127,208,.20), transparent 65%), radial-gradient(700px 340px at 10% 106%, rgba(123,95,176,.14), transparent 60%)',
+  '坊市':'radial-gradient(1100px 520px at 50% -8%, rgba(201,164,92,.20), transparent 65%), radial-gradient(700px 340px at 90% 106%, rgba(150,116,46,.13), transparent 60%)',
+  '宗门':'radial-gradient(1100px 520px at 50% -8%, rgba(111,155,196,.17), transparent 65%), radial-gradient(700px 340px at 8% 106%, rgba(79,123,166,.12), transparent 60%)',
+  '洞府':'radial-gradient(1100px 520px at 50% -8%, rgba(95,156,140,.18), transparent 65%), radial-gradient(700px 340px at 88% 106%, rgba(63,124,108,.13), transparent 60%)',
+  '情缘':'radial-gradient(1100px 520px at 50% -8%, rgba(207,127,154,.19), transparent 65%), radial-gradient(700px 340px at 10% 106%, rgba(178,95,125,.13), transparent 60%)',
+  '修炼':'radial-gradient(1100px 520px at 50% -8%, rgba(121,179,146,.17), transparent 65%), radial-gradient(700px 340px at 88% 106%, rgba(84,143,108,.12), transparent 60%)',
+  '渡劫':'radial-gradient(1100px 520px at 50% -8%, rgba(124,95,166,.22), transparent 65%), radial-gradient(700px 340px at 50% 112%, rgba(91,63,133,.16), transparent 60%)',
+  '赶路':'radial-gradient(1100px 520px at 50% -8%, rgba(143,136,122,.13), transparent 65%)'
+};
 
 /* ================= API 配置 ================= */
 const PROVIDERS=[
@@ -648,13 +689,13 @@ const BOOT_ZHOU=document.getElementById('bootZhou').textContent.trim();
 const BOOT_NEW=document.getElementById('bootNew').textContent.trim();
 
 /* ================= 游戏状态 ================= */
-let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',busy:false};
-const HIST_WINDOW=24;
+let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,busy:false};
+const HIST_WINDOW=30;
 let summarizing=false;
 
 /* ================= 协议解析 ================= */
 function parseReply(text){
-  const out={time:'',narr:[],panels:[],options:[],state:{},rolls:[],raw:text};
+  const out={time:'',scene:'',narr:[],panels:[],options:[],state:{},rolls:[],raw:text};
   let cur=null;
   const lines=String(text||'').split(/\r?\n/);
   for(let li=0;li<lines.length;li++){
@@ -664,6 +705,7 @@ function parseReply(text){
       const parts=body.split('|').map(s=>s.trim());
       const t=parts[0];
       if(t==='时间'){out.time=parts.slice(1).join('|');}
+      else if(t==='场景'){out.scene=parts.slice(1).join('|');}
       else if(t==='旁白'){out.narr.push({text:parts.slice(1).join('|')});}
       else if(t==='面板'){
         cur={标题:'',主题:'',items:[]};
@@ -789,7 +831,15 @@ function statusCard(st){
 }
 function renderTurn(parsed,past){
   const turn=h('div',{class:'turn'+(past?' past':'')});
-  if(parsed.time)turn.append(h('div',{class:'turn-date'},parsed.time));
+  if(parsed.time||parsed.scene){
+    const dr=h('div',{class:'turn-date'});
+    if(parsed.time)dr.append(parsed.time);
+    if(parsed.scene){
+      const c=SCENE_C[parsed.scene]||'#8C8578';
+      dr.append(h('span',{class:'scene-chip',style:'background:'+c},parsed.scene));
+    }
+    turn.append(dr);
+  }
   parsed.narr.forEach(n=>turn.append(h('p',{class:'narr'},n.text)));
   parsed.panels.forEach(p=>turn.append(renderPanel(p)));
   parsed.rolls.forEach(r=>{if(!parsed.panels.some(p=>(p.items||[]).some(it=>it.t==='判定'&&it.text===r)))turn.append(h('div',{class:'roll'},'⟐ '+r));});
@@ -817,8 +867,20 @@ function renderTurn(parsed,past){
     turn.append(h('div',{class:'freehint'},'—— 也可在下方输入框自由输入任何行动 ——'));
   }
   document.getElementById('storyArea').append(turn);
+  setScene(parsed.scene);
   scrollBottom();
   return turn;
+}
+function setScene(scene){
+  const tint=document.getElementById('sceneTint');
+  if(!tint)return;
+  if(scene&&SCENE_C[scene]){
+    document.body.dataset.scene=scene;
+    tint.style.background=SCENE_TINT[scene]||'';
+  }else{
+    delete document.body.dataset.scene;
+    tint.style.background='';
+  }
 }
 function appendUserMsg(text){
   document.getElementById('storyArea').append(h('div',{class:'msg-wrap user'},h('div',{class:'msg-user'},text)));
@@ -918,7 +980,7 @@ function buildMessages(){
   const m=[{role:'system',content:SYS_PROMPT+(cfg.extraRules?'\n\n【玩家追加规则 · 同样必须遵守】\n'+cfg.extraRules:'')}];
   if(G.worldArchive)m.push({role:'system',content:'【世界档案 · 玩家设定，最高优先级】\n'+G.worldArchive});
   if(G.memory)m.push({role:'system',content:'【天道备忘录 · 此前长线剧情已压缩于此】\n'+G.memory});
-  if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略，请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
+  if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略。天道备忘录是完整的世界档案级长期记忆，其中一切已确立的剧情事实必须遵守：不得矛盾、不得遗忘、不得改名换姓。请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
   m.push.apply(m,G.history.slice(-HIST_WINDOW));
   return m;
 }
@@ -982,10 +1044,20 @@ async function forceSummary(){
 async function doSummary(){
   if(summarizing)return;summarizing=true;
   try{
-    const msgs=[{role:'system',content:'你是存档压缩系统。请把下面的游戏对话压缩为「天道备忘录」：按时间顺序列出主线大事、NPC关系与好感变化、重大数值变动、未解伏笔与待办。15行以内，纯文本，不要任何◆标记与多余解释。'},
-      ...G.history.slice(-40)];
-    const s=await callAI(msgs,{timeoutMs:180000});
+    const since=G.memTurn||0;
+    const recent=G.history.slice(since);
+    if(recent.length<2){summarizing=false;return;}
+    const recentText=recent.map(m=>(m.role==='user'?'【玩家】 ':'【天道】\n')+m.content).join('\n\n').slice(-80000);
+    const sysText='你是世界档案维护者。给你「旧档案」与「新增剧情」，请输出更新后的完整档案。铁律：'+
+      '1) 旧档案中已确立的事实必须全部保留，除非新增剧情明确推翻（推翻时注明新事实）；'+
+      '2) 按此结构组织：【主线大事记】【人物与好感】【数值·物品·资源】【伏笔与待办】【当前局面】；'+
+      '3) 新增剧情按时间顺序并入对应小节，重要台词、承诺、恩怨、地名、人名、物品名、功法名必须保留原名原说法；好感数值取最新值；'+
+      '4) 全文不超过3000字，纯文本，不要◆标记，不要任何解释与开场白，直接输出档案。';
+    const msgs=[{role:'system',content:sysText},
+      {role:'user',content:'【旧档案】\n'+(G.memory||'（无）')+'\n\n【新增剧情】\n'+recentText}];
+    const s=await callAI(msgs,{timeoutMs:240000});
     G.memory=s.replace(/^◆.*$/gm,'').trim();
+    G.memTurn=G.history.length;
     autosave();
     toast('长线记忆已更新');
   }catch(e){toast('压缩失败：'+(e.message||e));}
@@ -1001,7 +1073,7 @@ function autosave(){
   if(!G.saveId)G.saveId='save_'+Date.now();
   const list=loadSaves();
   const entry={id:G.saveId,ts:Date.now(),mode:G.mode,turn:G.turn,state:G.state,
-    memory:G.memory,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
+    memory:G.memory,memTurn:G.memTurn||0,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
   const i=list.findIndex(x=>x.id===entry.id);
   if(i>=0)list[i]=entry;else list.unshift(entry);
   while(list.length>12)list.pop();
@@ -1025,7 +1097,7 @@ function loadGame(id){
   const sv=loadSaves().find(x=>x.id===id);
   if(!sv){toast('存档不存在');return;}
   G={mode:sv.mode,saveId:sv.id,turn:sv.turn||0,history:sv.history||[],state:sv.state||{},
-    worldArchive:sv.worldArchive||'',memory:sv.memory||'',busy:false};
+    worldArchive:sv.worldArchive||'',memory:sv.memory||'',memTurn:sv.memTurn||0,busy:false};
   enterGame(sv.mode==='zhou'?'周子清线':'新仙途');
   (G.history||[]).forEach(m=>{
     if(m.role==='user')appendUserMsg(m.content);
@@ -1087,14 +1159,14 @@ function enterGame(badge){
   document.body.classList.remove('side-open');
 }
 function startZhou(){
-  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',busy:false};
+  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,busy:false};
   enterGame('周子清 · 天玄历387年冬');
   G.history.push({role:'user',content:BOOT_ZHOU});
   autosave();
   runTurn();
 }
 function startNew(){
-  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',busy:false};
+  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,busy:false};
   enterGame('新仙途 · 创角');
   G.history.push({role:'user',content:BOOT_NEW});
   autosave();
