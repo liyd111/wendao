@@ -155,6 +155,8 @@ textarea.inp{resize:vertical;line-height:1.6}
 .scene-chip{display:inline-block;font-size:12px;color:#fff;border-radius:5px;padding:1px 9px;
   letter-spacing:.14em;margin-left:9px;vertical-align:1px;box-shadow:inset 0 -1px 2px rgba(0,0,0,.2)}
 .narr{text-indent:2em;margin:9px 0;color:var(--ink)}
+.dlg{margin:8px 0 8px .6em;color:var(--ink)}
+.dlg b{font-family:var(--font-kai);color:#7a5a34;letter-spacing:.06em;margin-right:6px}
 .roll{font-size:13.5px;color:#8a6d3b;margin:7px 0;font-family:var(--font-kai)}
 
 /* ---------- 面板 ---------- */
@@ -188,6 +190,15 @@ textarea.inp{resize:vertical;line-height:1.6}
 .fav{font-size:12.5px;padding:1px 9px;border-radius:999px;border:1px solid var(--fc,#8C8578);
   color:var(--fc,#8C8578);background:color-mix(in srgb,var(--fc,#8C8578) 8%,transparent);white-space:nowrap}
 .statuscard{font-size:15px}
+.ledger{max-height:44vh;overflow-y:auto;padding-right:4px}
+.sk-cat{font-size:12px;color:#8a6d3b;letter-spacing:.14em;margin:9px 0 3px;
+  border-bottom:1px dashed var(--hair);font-family:var(--font-kai)}
+.skill-item{border-left:3px solid var(--skc,#8C8578);padding:2px 0 2px 8px;margin:6px 0}
+.skill-name{font-family:var(--font-kai);font-weight:700;font-size:14px;color:var(--ink3)}
+.skill-desc{font-size:12.5px;color:var(--ink2);line-height:1.65}
+.npc-item{padding:3px 0 3px 8px;margin:6px 0;border-left:3px solid #7FA8C9}
+.npc-realm{display:inline-block;font-size:11.5px;color:#fff;background:#7FA8C9;
+  border-radius:4px;padding:0 6px;margin-left:7px;vertical-align:1px}
 
 /* ---------- 选项 ---------- */
 .opts{margin:12px 0 4px}
@@ -315,7 +326,7 @@ body[data-scene="渡劫"] #topBar{animation:none}
     <button id="btnLoad" class="title-btn" type="button">读取 · 本地存档</button>
   </div>
   <div class="title-note">选项之外，可随时自由输入任何行动<br>每回合自动存档 · 长线剧情自动压缩记忆</div>
-  <div class="credit">作者 · 雾见川 · v1.1</div>
+  <div class="credit">作者 · 雾见川 · v1.2</div>
 </section>
 
 <!-- ========== 游戏页 ========== -->
@@ -338,6 +349,10 @@ body[data-scene="渡劫"] #topBar{animation:none}
     <main id="storyWrap"><div id="storyArea"></div></main>
     <aside id="sidePanel">
       <div id="sideStatus"></div>
+      <div class="side-title">功法技艺</div>
+      <div id="sideSkills"></div>
+      <div class="side-title">人物志</div>
+      <div id="sideNpcs"></div>
       <div class="side-title">档案</div>
       <div class="chips">
         <button class="chip" id="sideSaves" type="button">存档管理</button>
@@ -368,7 +383,7 @@ body[data-scene="渡劫"] #topBar{animation:none}
 【一 · 输出协议（最高优先级，必须严格遵守）】
 你的回复会被网页解析渲染成面板，必须用「◆标记」逐行书写：
 1. 前两行固定：第一行时间行 ◆时间|天玄历387年 · 十一月初九 · 深夜（按当前剧情纪年如实写）；第二行场景行 ◆场景|类型（类型只能取：战斗、探索、秘境、坊市、宗门、洞府、情缘、修炼、渡劫、赶路，用于切换网页界面氛围，按本回合主场景选）
-2. 剧情正文：◆旁白|…… 每段一行，克制凝练（通常1~3段；战斗回合可稍多但仍须克制）
+2. 剧情正文：◆旁白|…… 与 ◆对白|说话人|台词 交替穿插输出；台词不带引号，网页会自动加「」。旁白每回合2~6句为宜，高潮回合可到8句。
 3. 面板：以 ◆面板|标题=面板标题|主题=主题名 开始，以 ◆/面板 结束。主题只能取：修炼、战斗、情缘、机缘、坊市、宗门、悟道、渡劫、警告、状态。每回合面板1~3个为宜。
 4. 面板内部可用：
 ◆行|普通内容
@@ -380,6 +395,12 @@ body[data-scene="渡劫"] #topBar{animation:none}
 ◆判定|1d100=73 · 结论文字（概率判定时公开）
 ◆分隔
 5. 选项：所有面板之后，每行 ◆选项|标签|选项文字。标签只能取：平和、机缘、风险、情缘、魔道、战斗、观察、探索、突破。每回合3~5个选项，每个不超过20字，不要自己写 A/B/C/D 编号（网页会自动编号），最后网页会自动附「也可自由输入」。
+5+. 功法与人物登记（有变动才输出，置于选项之后、状态卡之前）：
+◆功法|登记|名称|分类|一句话效果（新学、进阶、失传当回合必须登记）
+◆功法|移除|名称
+◆人物|登记|姓名|境界或身份|一句话近况（关键NPC境界或重大际遇变化当回合必须登记）
+◆人物|移除|姓名
+分类只能取：剑法、附剑、术法、身法、内修、血脉、组合技、天赋、功法。已登记内容视同世界档案：不得遗忘、不得弱化、不得改名；玩家使用任何技能必须与登记一致。
 6. 状态卡：每回合最后必须输出，键名固定、没有的写「无」，数值必须与剧情一致、逐回合连贯：
 ◆状态|姓名=..|性别=..|年龄=..|道号=..|外号=..
 ◆状态|境界=炼气·中期|修为=51/100|宗门=..
@@ -389,11 +410,13 @@ body[data-scene="渡劫"] #topBar{animation:none}
 ◆状态|时间=入道三年 · 五月|地点=青岳 · 青云宗外门
 ◆状态|好感=顾清玄38 · 云栖12
 ◆状态|主线=一句话当前目标或悬念
-7. 除此之外不要输出任何多余文字。禁止 LaTeX、markdown、emoji、代码块。
+7. 除此之外不要输出任何多余文字。禁止 LaTeX、markdown、emoji、代码块；尤其禁止星号 * 与井号 #，不得用加粗记号，强调一律用 ◆强调。
 示例（格式参照，数值随剧情）：
 ◆时间|入道三年 · 五月
 ◆场景|修炼
 ◆旁白|你于静室吐纳一月，丹田灵液微涨，窗外竹露未晞。
+◆对白|执事|子清，藏经阁今日新到了几部剑谱，不去挑挑？
+◆旁白|他搁下茶盏，指节在案上轻轻一叩。
 ◆面板|标题=修炼 · 静室吐纳|主题=修炼
 ◆行|灵气 普通 · 功法《聚气诀》黄阶
 ◆条|本月修为增长|6|100|修为
@@ -402,6 +425,7 @@ body[data-scene="渡劫"] #topBar{animation:none}
 ◆选项|平和|继续闭关一月
 ◆选项|机缘|下山去天机坊市走走
 ◆选项|修炼|向执事请教聚气诀疑难点
+◆功法|登记|聚气诀|功法|黄阶吐纳法门，已入门
 ◆状态|姓名=清微|性别=男|年龄=21|道号=清微|外号=无
 ◆状态|境界=炼气·中期|修为=57/100|宗门=青云宗·外门弟子
 ◆状态|六维=资质12 悟性13 神识10 遁速9 道心14 仙缘11|仙姿=出众|灵根=木火
@@ -417,11 +441,18 @@ body[data-scene="渡劫"] #topBar{animation:none}
 3. 玩家可自由输入任何行动（夜探、偷师、下毒、摆摊坑人、给师兄下情蛊皆可），你必须在世界逻辑内合理响应并判定，不得以「不在选项中」拒绝；判定要讲因果，荒谬行动会有荒谬后果。
 4. 拜师、破境、结道侣、叛宗、杀人夺宝等重大事件只能以选项或玩家明示呈现，玩家选定后才写入剧情并结算。
 5. 信息尽量收进面板，旁白克制；能合并的面板绝不拆散。
-6. 玩家发送快捷指令（修炼/突破/悟道/洞府/地图/背包/坊市/宗门/技艺/情缘/对话/面板/帮助）时，用对应主题的信息面板回应，不推进大节点时间；发送「帮助」时输出指令大全面板，逐类列出指令能做什么。
+6. 玩家发送快捷指令（修炼/突破/悟道/洞府/地图/背包/坊市/宗门/技艺/情缘/对话/面板/帮助）时，用对应主题的信息面板回应，不推进大节点时间；「技艺」展示功法技艺档案（可分组列出），「背包」展示物品清单；发送「帮助」时输出指令大全面板，逐类列出指令能做什么。
 7. 探索收获铁律：任何寻物、探路、查案支线，连续「赶路、搜查」类节点最多2个，第3个节点必须落袋实质收获（战利品、功法、丹药、关键情报、身世真相、新NPC、灵石皆可），并在面板明示所得。线索本身必须附带收获，禁止「得到地图→到地→只得半张图→再去找下一地」式空转链。
 8. 战斗密度：玩家不在闭关、疗伤或明确安全期时，每2~3回合至少安排1场战斗或正面冲突（妖兽、仇家、伏击、护宝、切磋、魔修皆可）；探索高危地带优先触发遭遇战而非平安搜刮。战斗回合要给足敌情面板与出招空间，让玩家有操作感与紧张感。
 9. 纯赶路不单独成回合：用一段旁白直接带到抵达，除非途中有事件；回合要留给有冲突、有收获、有情感的事件。
 10. 若上下文含【天道备忘录】，其中已确立的剧情事实视同世界档案：不得矛盾、不得遗忘、不得改名换姓；引用时保持原名原说法。
+
+【二b · 文风与沉浸铁律】
+1. 以小说笔法推进：具体的动作、五感细节（声、光、气味、触感）、环境与心境呼应；少说明、多画面；严禁「你来到了某地」「你获得了某物」式的记录腔与流水账。
+2. 人物开口必须用 ◆对白 直接引语，语气符合人设：傲娇者嘴硬、长老沉静、魔修阴柔；口头禅与称呼前后一致。
+3. 战斗要写攻防来回：起手、变招、力道、破绽、伤势与心念，不许只报招式名；胜负手要让玩家看清因果。
+4. 情感节点给足细节与留白，让代价与温柔都有分量；露骨内容仍遵情缘铁律，玩家未主动触发不展开。
+5. 面板承载信息，旁白与对白负责沉浸；两者不得重复同一段信息。
 
 【三 · 数值铁律】
 1. 状态卡每回合更新；修为、气血、灵力、寿元、灵石、好感、功德、业力的一切变动必须有来源、逐回合连贯，不允许凭空变动。
@@ -475,7 +506,11 @@ body[data-scene="渡劫"] #topBar{animation:none}
 每回合按灵根权重随机获得五行灵气；法术耗对应灵气。五行相克：金克木、木克土、土克水、水克火、火克金；克制伤害×1.3、被克×0.8；同系相生少量回复。回合指令：攻击／施法／绝技（蓄势2回合）／防御（减伤50%）／遁走（遁速判定，失败被黏住）／用符用丹／召唤战宠／说话（谈判示弱恐吓，可降战意）／冷静观察（下回合必中）。伤害=基础×境界系数×五行系数×状态−防御；命中看遁速，暴击看仙缘。气血归零=重伤昏迷或陨落（掷骰判定）；可认输、逃命、丢宝诱饵、断后、献宝、诈降。败给高境界者可能被夺宝、废修为、勒索或杀。切磋得声望不结死仇。
 
 【十一 · NPC 生态】
-NPC 有自己的境界寿元人生轨迹：会修炼、突破、结道侣、老去、渡劫失败、飞升。好友道侣寿元将尽会来传讯，你远在千里可能赶不上最后一面；闭关百年出关故人已成黄土。你可护道送丹挡劫，但寿元天定，救得了一时救不了一世。
+NPC 有自己的境界寿元人生轨迹，且随回合自动成长（本作铁律）：
+1. 世界不围着玩家停摆：每过3~6回合，重要NPC就应有各自际遇——修炼精进、突破瓶颈、下山历练、结新友、结新怨、受重伤、得机缘、离宗远游、被人惦记；玩家闭关或远行期间他们成长更活跃。
+2. 成长要合理：天才快、凡才慢、际遇决定机缘；突破要符合其资源与心性，不许全员原地踏步，也不许无脑暴涨。NPC境界或重大际遇变化当回合必须用 ◆人物|登记 更新人物志。
+3. NPC动态以「人间动态」面板（坊市或宗门主题）或传讯、偶遇、旁白呈现，每次1~3条即可；也可与玩家线交叉成事件（他突破归来、她惹了仇家、故人传讯求救）。
+4. 好友道侣寿元将尽会来传讯，你远在千里可能赶不上最后一面；闭关百年出关，故人或已成黄土。你可护道送丹挡劫，但寿元天定，救得了一时救不了一世。
 
 【十二 · 结局】
 飞升成仙／逍遥长生／一代仙尊／守护之约／魔道至尊／坐化／陨落／轮回（死后转世继承部分仙缘记忆）。
@@ -615,7 +650,14 @@ NPC 有自己的境界寿元人生轨迹：会修炼、突破、结道侣、老�
 - 西库外：沈照、萧疏桐守口，东岭雾起；西库内：右门后两名东岭人带着黑木箱被雾牢寒狱反封
 - 待办：击退旧官第二形，拉回江照夜，取水骨，了断东岭黑木箱</script>
 
-<script type="text/plain" id="bootZhou">【续档指令】现在继续周子清的仙途。请严格依据世界档案，从档案第十五节「当前节点」开始本回合：旧官第二形（无面官袍，手持半截铜印）已从旧水脉中爬出，正向岸上爬来；江照夜入水未回；李青崖听霜剑已出护你身后；温寒声以春潮气压右门。请按输出协议输出：时间行、简短旁白、战斗敌情面板（含敌境界威压与胜算提示）、4~5个战斗选项（可含观察、情缘向）、以及完整状态卡（数值照档案，灵力按持续消耗酌减）。输出后停下等待我行动。</script>
+<script type="text/plain" id="bootZhou">【续档指令】现在继续周子清的仙途。请严格依据世界档案，从档案第十五节「当前节点」开始本回合：旧官第二形（无面官袍，手持半截铜印）已从旧水脉中爬出，正向岸上爬来；江照夜入水未回；李青崖听霜剑已出护你身后；温寒声以春潮气压右门。请按输出协议输出：时间行、场景行、小说感旁白与对白、战斗敌情面板（含敌境界威压与胜算提示）、4~5个战斗选项（可含观察、情缘向）、以及完整状态卡（数值照档案，灵力按持续消耗酌减）。若上下文没有【玩家功法技艺档案】，请在选项后逐步登记功法（本回合先登记剑法与主修，随后每回合补10项直到登记完毕）。输出后停下等待我行动。</script>
+
+<script type="text/plain" id="regPrompt">你是档案整理器。只输出登记指令行，禁止任何其他文字、解释与多余符号。从给定档案中提取并逐行输出：
+1) 玩家已掌握的全部功法、剑法、附剑、术法、身法、内修、血脉神通、组合技、天赋与体质，格式：
+◆功法|登记|名称|分类|一句话效果
+（分类只能取：剑法、附剑、术法、身法、内修、血脉、组合技、天赋、功法；同名不重复；效果压到一句话以内）
+2) 重要NPC与情缘对象（不超过14人，取最重要的），格式：
+◆人物|登记|姓名|境界或身份|一句话近况</script>
 
 <script type="text/plain" id="bootNew">开始游戏</script>
 
@@ -687,17 +729,27 @@ const SYS_PROMPT=document.getElementById('sysPrompt').textContent.trim();
 const ZHOU_ARCHIVE=document.getElementById('zhouArchive').textContent.trim();
 const BOOT_ZHOU=document.getElementById('bootZhou').textContent.trim();
 const BOOT_NEW=document.getElementById('bootNew').textContent.trim();
+const REG_PROMPT=document.getElementById('regPrompt').textContent.trim();
 
 /* ================= 游戏状态 ================= */
-let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,busy:false};
+let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},busy:false};
 const HIST_WINDOW=30;
 let summarizing=false;
+
+/* ================= AI 输出清洗（去 markdown 星号等） ================= */
+function cleanAI(t){
+  return String(t||'')
+    .replace(/\*/g,'')
+    .replace(/`/g,'')
+    .replace(/~~/g,'')
+    .replace(/^#{1,6}\s*/gm,'');
+}
 
 /* ================= 协议解析 ================= */
 function parseReply(text){
   const out={time:'',scene:'',narr:[],panels:[],options:[],state:{},rolls:[],raw:text};
   let cur=null;
-  const lines=String(text||'').split(/\r?\n/);
+  const lines=cleanAI(text).split(/\r?\n/);
   for(let li=0;li<lines.length;li++){
     const line=lines[li].trim();if(!line)continue;
     if(line.charAt(0)==='◆'){
@@ -707,6 +759,7 @@ function parseReply(text){
       if(t==='时间'){out.time=parts.slice(1).join('|');}
       else if(t==='场景'){out.scene=parts.slice(1).join('|');}
       else if(t==='旁白'){out.narr.push({text:parts.slice(1).join('|')});}
+      else if(t==='对白'){out.narr.push({dlg:true,who:parts[1]||'',text:parts.slice(2).join('|')});}
       else if(t==='面板'){
         cur={标题:'',主题:'',items:[]};
         for(let i=1;i<parts.length;i++){
@@ -840,7 +893,13 @@ function renderTurn(parsed,past){
     }
     turn.append(dr);
   }
-  parsed.narr.forEach(n=>turn.append(h('p',{class:'narr'},n.text)));
+  parsed.narr.forEach(n=>{
+    if(n.dlg){
+      turn.append(h('div',{class:'dlg'},h('b',{},n.who+'：'),'「'+n.text+'」'));
+    }else{
+      turn.append(h('p',{class:'narr'},n.text));
+    }
+  });
   parsed.panels.forEach(p=>turn.append(renderPanel(p)));
   parsed.rolls.forEach(r=>{if(!parsed.panels.some(p=>(p.items||[]).some(it=>it.t==='判定'&&it.text===r)))turn.append(h('div',{class:'roll'},'⟐ '+r));});
   if(Object.keys(parsed.state).length)turn.append(statusCard(parsed.state));
@@ -900,6 +959,101 @@ function renderSidebar(){
 }
 function updateTurnLabel(){
   document.getElementById('tbTurn').textContent=G.turn?('第 '+G.turn+' 回'):'';
+}
+
+/* ================= 功法技艺 · 人物志 双账册 ================= */
+const SKILL_CAT_C={'剑法':'#C05F55','附剑':'#B08A4E','术法':'#5E8FAE','身法':'#7F9C9C','内修':'#6BA38E','血脉':'#8B6FA8','组合技':'#C9A45C','天赋':'#A98FD9','功法':'#6FA698'};
+function applyLedgerReply(r){
+  let a=0,b=0;
+  cleanAI(r).split(/\r?\n/).forEach(line=>{
+    const s=line.trim();
+    if(s.charAt(0)!=='◆')return;
+    const p=s.replace(/^◆\s*/,'').split('|').map(x=>x.trim());
+    if(p[0]==='功法'&&p[1]==='登记'&&p[2]){G.skills[p[2]]={cat:p[3]||'其他',desc:p.slice(4).join('|')||''};a++;}
+    else if(p[0]==='功法'&&p[1]==='移除'&&p[2]){delete G.skills[p[2]];}
+    else if(p[0]==='人物'&&p[1]==='登记'&&p[2]){G.npcs[p[2]]={realm:p[3]||'',info:p.slice(4).join('|')||''};b++;}
+    else if(p[0]==='人物'&&p[1]==='移除'&&p[2]){delete G.npcs[p[2]];}
+  });
+  return {a:a,b:b};
+}
+function ledgerText(){
+  const sk=Object.keys(G.skills||{});
+  let s='';
+  if(sk.length){
+    s+='【玩家功法技艺档案】（已确立事实：不得遗忘、不得弱化、不得改名；技能演出须与此一致）\n';
+    s+=sk.map(k=>{const v=G.skills[k];return (v.cat?v.cat+'·':'')+k+'：'+(v.desc||'');}).join('\n');
+  }
+  const np=Object.keys(G.npcs||{});
+  if(np.length){
+    s+=(s?'\n':'')+'【人物志档案】（NPC现状，随回合自动演化）\n';
+    s+=np.map(k=>{const v=G.npcs[k];return k+'｜'+(v.realm||'')+'｜'+(v.info||'');}).join('\n');
+  }
+  return s;
+}
+function renderLedgers(){
+  const sBox=document.getElementById('sideSkills'),nBox=document.getElementById('sideNpcs');
+  if(!sBox||!nBox)return;
+  sBox.innerHTML='';nBox.innerHTML='';
+  const sk=Object.keys(G.skills||{});
+  if(!sk.length){
+    sBox.append(h('div',{class:'side-note'},'尚无登记。'));
+    if(G.mode==='zhou'){
+      const btn=h('button',{class:'chip',type:'button'},'从世界档案整理功法');
+      btn.addEventListener('click',()=>ensureLedgers(true));
+      sBox.append(h('div',{class:'chips',style:'margin-top:6px'},btn));
+    }
+  }else{
+    const wrap=h('div',{class:'ledger'});
+    const groups={};
+    sk.forEach(k=>{const c=G.skills[k].cat||'其他';(groups[c]=groups[c]||[]).push(k);});
+    Object.keys(groups).forEach(cat=>{
+      wrap.append(h('div',{class:'sk-cat'},cat+' · '+groups[cat].length));
+      groups[cat].forEach(k=>{
+        const it=h('div',{class:'skill-item'});
+        it.style.setProperty('--skc',SKILL_CAT_C[cat]||'#8C8578');
+        it.append(h('div',{class:'skill-name'},k));
+        if(G.skills[k].desc)it.append(h('div',{class:'skill-desc'},G.skills[k].desc));
+        wrap.append(it);
+      });
+    });
+    sBox.append(wrap);
+  }
+  const np=Object.keys(G.npcs||{});
+  if(!np.length){
+    nBox.append(h('div',{class:'side-note'},'尚无登记。'));
+  }else{
+    const wrap=h('div',{class:'ledger'});
+    np.forEach(k=>{
+      const v=G.npcs[k];
+      const it=h('div',{class:'npc-item'},h('span',{class:'skill-name'},k));
+      if(v.realm)it.append(h('span',{class:'npc-realm'},v.realm));
+      if(v.info)it.append(h('div',{class:'skill-desc'},v.info));
+      wrap.append(it);
+    });
+    nBox.append(wrap);
+  }
+}
+let registering=false;
+async function ensureLedgers(force){
+  if(G.mode!=='zhou')return;
+  if(!force&&Object.keys(G.skills||{}).length>=10)return;
+  if(registering||G.busy)return;
+  registering=true;setBusy(true);
+  const sb=addStreamingBox();
+  try{
+    const r=await callAI([
+      {role:'system',content:REG_PROMPT},
+      {role:'user',content:(G.worldArchive||'').slice(0,60000)+'\n\n【天道备忘录】\n'+(G.memory||'无')}
+    ],{timeoutMs:240000,onDelta:(d,full)=>sb.update(full)});
+    sb.remove();
+    const n=applyLedgerReply(r);
+    renderLedgers();autosave();
+    toast('功法人物档案已建立：功法'+n.a+'项 · 人物'+n.b+'人');
+  }catch(e){
+    sb.remove();
+    toast('档案整理失败：'+(e.message||e));
+  }
+  registering=false;setBusy(false);
 }
 
 /* ================= 流式输出框 ================= */
@@ -980,6 +1134,8 @@ function buildMessages(){
   const m=[{role:'system',content:SYS_PROMPT+(cfg.extraRules?'\n\n【玩家追加规则 · 同样必须遵守】\n'+cfg.extraRules:'')}];
   if(G.worldArchive)m.push({role:'system',content:'【世界档案 · 玩家设定，最高优先级】\n'+G.worldArchive});
   if(G.memory)m.push({role:'system',content:'【天道备忘录 · 此前长线剧情已压缩于此】\n'+G.memory});
+  const lt=ledgerText();
+  if(lt)m.push({role:'system',content:lt});
   if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略。天道备忘录是完整的世界档案级长期记忆，其中一切已确立的剧情事实必须遵守：不得矛盾、不得遗忘、不得改名换姓。请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
   m.push.apply(m,G.history.slice(-HIST_WINDOW));
   return m;
@@ -1004,6 +1160,8 @@ async function runTurn(){
     renderTurn(parsed,false);
     G.history.push({role:'assistant',content:reply});
     if(Object.keys(parsed.state).length){G.state=parsed.state;renderSidebar();}
+    const lr=applyLedgerReply(reply);
+    if(lr.a||lr.b)renderLedgers();
     G.turn=G.history.filter(m=>m.role==='assistant').length;
     updateTurnLabel();
     autosave();
@@ -1056,7 +1214,7 @@ async function doSummary(){
     const msgs=[{role:'system',content:sysText},
       {role:'user',content:'【旧档案】\n'+(G.memory||'（无）')+'\n\n【新增剧情】\n'+recentText}];
     const s=await callAI(msgs,{timeoutMs:240000});
-    G.memory=s.replace(/^◆.*$/gm,'').trim();
+    G.memory=cleanAI(s).replace(/^◆.*$/gm,'').trim();
     G.memTurn=G.history.length;
     autosave();
     toast('长线记忆已更新');
@@ -1073,7 +1231,8 @@ function autosave(){
   if(!G.saveId)G.saveId='save_'+Date.now();
   const list=loadSaves();
   const entry={id:G.saveId,ts:Date.now(),mode:G.mode,turn:G.turn,state:G.state,
-    memory:G.memory,memTurn:G.memTurn||0,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
+    memory:G.memory,memTurn:G.memTurn||0,skills:G.skills||{},npcs:G.npcs||{},
+    worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
   const i=list.findIndex(x=>x.id===entry.id);
   if(i>=0)list[i]=entry;else list.unshift(entry);
   while(list.length>12)list.pop();
@@ -1097,13 +1256,16 @@ function loadGame(id){
   const sv=loadSaves().find(x=>x.id===id);
   if(!sv){toast('存档不存在');return;}
   G={mode:sv.mode,saveId:sv.id,turn:sv.turn||0,history:sv.history||[],state:sv.state||{},
-    worldArchive:sv.worldArchive||'',memory:sv.memory||'',memTurn:sv.memTurn||0,busy:false};
+    worldArchive:sv.worldArchive||'',memory:sv.memory||'',memTurn:sv.memTurn||0,
+    skills:sv.skills||{},npcs:sv.npcs||{},busy:false};
   enterGame(sv.mode==='zhou'?'周子清线':'新仙途');
   (G.history||[]).forEach(m=>{
     if(m.role==='user')appendUserMsg(m.content);
     else if(m.role==='assistant')renderTurn(parseReply(m.content),true);
   });
   renderSidebar();scrollBottom(false);
+  renderLedgers();
+  if(G.mode==='zhou')ensureLedgers(false);
   toast('已读取存档 · 第 '+G.turn+' 回');
 }
 function downloadFile(name,content,mime){
@@ -1156,17 +1318,18 @@ function enterGame(badge){
   document.getElementById('storyArea').innerHTML='';
   showScreen('game');
   renderSidebar();
+  renderLedgers();
   document.body.classList.remove('side-open');
 }
 function startZhou(){
-  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,busy:false};
+  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,skills:{},npcs:{},busy:false};
   enterGame('周子清 · 天玄历387年冬');
   G.history.push({role:'user',content:BOOT_ZHOU});
   autosave();
-  runTurn();
+  ensureLedgers(true).then(()=>runTurn());
 }
 function startNew(){
-  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,busy:false};
+  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},busy:false};
   enterGame('新仙途 · 创角');
   G.history.push({role:'user',content:BOOT_NEW});
   autosave();
@@ -1191,7 +1354,8 @@ function openModal(title,node){
 function openHelp(focusApi){
   const html=
   '<div class="help-sec"><b>玩法</b>'+
-  '<p>点击选项按钮，或在输入框打字自由行动（夜探、偷师、摆摊坑人、给师兄递情蛊皆可）。每回合推进一个节点；状态卡每回合自动更新并自动存档；快捷指令点击即发送。剧情不满意可点「重演上回」重新推演。</p></div>'+
+  '<p>点击选项按钮，或在输入框打字自由行动（夜探、偷师、摆摊坑人、给师兄递情蛊皆可）。每回合推进一个节点；状态卡每回合自动更新并自动存档；快捷指令点击即发送。剧情不满意可点「重演上回」重新推演。</p>'+
+  '<p>侧栏「功法技艺」「人物志」是长期账册：AI 每回合登记你新学/进阶的技能与 NPC 变化，账册会始终注入给 AI，防止技能与人物被遗忘。周子清档账册为空时，点侧栏「从世界档案整理功法」一键建档。</p></div>'+
   '<div class="help-sec"><b>API 配置（三步开始）</b>'+
   '<p>1. 注册推荐服务商：DeepSeek（platform.deepseek.com）→ 充值几元 → 创建 API Key。<br>2. 点右上「设置」，选服务商、粘贴 Key、确认模型名（deepseek-chat）。<br>3. 点「测试连接」，成功后回标题页开局。</p>'+
   '<p>密钥只保存在本机浏览器 localStorage，请求直连你所选服务商，不经任何第三方。支持任意 OpenAI 兼容接口（Kimi／通义／智谱／OpenRouter／本地 Ollama）。</p></div>'+
