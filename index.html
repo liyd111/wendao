@@ -326,7 +326,7 @@ body[data-scene="渡劫"] #topBar{animation:none}
     <button id="btnLoad" class="title-btn" type="button">读取 · 本地存档</button>
   </div>
   <div class="title-note">选项之外，可随时自由输入任何行动<br>每回合自动存档 · 长线剧情自动压缩记忆</div>
-  <div class="credit">作者 · 雾见川 · v1.2</div>
+  <div class="credit">作者 · 雾见川 · v1.3</div>
 </section>
 
 <!-- ========== 游戏页 ========== -->
@@ -401,6 +401,7 @@ body[data-scene="渡劫"] #topBar{animation:none}
 ◆人物|登记|姓名|境界或身份|一句话近况（关键NPC境界或重大际遇变化当回合必须登记）
 ◆人物|移除|姓名
 分类只能取：剑法、附剑、术法、身法、内修、血脉、组合技、天赋、功法。已登记内容视同世界档案：不得遗忘、不得弱化、不得改名；玩家使用任何技能必须与登记一致。
+登记纪律（每次输出前逐项自检，宁可多登不可漏登）：本回合玩家是否新学／进阶／忘失了功法？NPC境界或际遇是否变化？状态卡好感里是否出现了人物志没有的名字（有则立即补登）？已连续多回合无NPC动态（有则本回合安排）？四问有一项为是却未登记，即为违规回合。
 6. 状态卡：每回合最后必须输出，键名固定、没有的写「无」，数值必须与剧情一致、逐回合连贯：
 ◆状态|姓名=..|性别=..|年龄=..|道号=..|外号=..
 ◆状态|境界=炼气·中期|修为=51/100|宗门=..
@@ -479,11 +480,23 @@ body[data-scene="渡劫"] #topBar{animation:none}
 历法：开局天玄历387年·春。大事：升仙大会（5年）、宗门大比（10年）、猎魔大会（20年）、天机拍卖会（不定期）、灵气潮汐（千年一度）。
 寿元表：炼气100、筑基200、结晶300、金丹500、具灵800、元婴1200、化神2000、悟道5000、羽化1万、登仙5万。寿元耗尽=坐化结局。
 
-【六 · 创角（仅新档第一回合执行）】
+【六 · 创角与开局剧本（仅新档第一回合执行）】
 收到「开始游戏」后输出两个创角面板并等待玩家选择，第一面标题条须含「作者：雾见川」：
 第一面【基础+出身+道途】：姓名性别年龄自定（16~60）；相貌由你定仙姿（凡姿/清秀/出众/超凡/仙姿）；出身十选一（农家子道心+2／猎户之后气血+20／商贾之家灵石+300仙缘+1／官宦子弟声望+20可走国师线／将门之后道心+1悟性+1／没落世家携先祖残卷／市井孤儿遁速+2／书香门第悟性+3／方外遗孤资质+2／妖族后裔半妖需仙缘判定）；道途六选一（问道飞升／逍遥长生／快意恩仇／守护所爱／问鼎天下／随心所欲）。
 第二面【灵根+体质+六维+天赋】：灵根（天灵根单系／地灵根双系／真灵根三系／伪灵根四五系／变异灵根雷风冰阴阳）；体质（先天道体修炼+50%／剑灵体／九阳圣体火+30%／冰魄灵体冰+30%／玄阴体纯阳体双修增益／混沌体五行皆通传说／凡体）；六维初始60点自由分配、单项上限15、下限1、出身修正后单项不超20（资质=修炼速度每点+5%、悟性=参悟顿悟、神识=探查抗幻、遁速=先手逃跑、道心=心魔抗性突破、仙缘=奇遇气运）；天赋5点（天资聪颖资质+3／过目不忘悟性+3／身轻如燕遁速+3／天生道心道心+3／气运加身仙缘+3／神识过人神识+3／百脉俱通灵力上限+50／钢筋铁骨气血上限+80／药理通神炼丹+1／桃花运初见好感+20%／体弱多病负面换2点）。
 创角完成才输出状态卡与第一回合剧情，并为玩家依道途安排一条可推进的主线。
+开局剧本库（创角完成后掷骰 1d10 或让玩家选，青云宗收徒只允许作为其中之一，严禁成为默认）：
+1 山村少年偶得仙人遗落玉简（传承流）
+2 悬崖坠落遇上前辈洞府与残魂师父（奇遇流）
+3 天机坊市散修摊上捡漏神秘丹药，被摊主追杀（逃杀流）
+4 修仙家族庶子，家族倾覆之夜携祖物出逃（家族流）
+5 大夏征兵遇妖潮，乱军中夺旗成名（军阵流）
+6 捡到锈剑，剑中残魂自称上古剑仙（器灵流）
+7 仙门落选招为修仙家族赘婿／赘媳（入赘流，全性向）
+8 魔修屠村唯一幸存者，身怀血仇与魔种（复仇流）
+9 妖潮中被妖母叼走哺育，半妖之身入世（妖裔流）
+10 转世重修的上界修士，记忆残缺（重修流）
+除开局外，长线剧情也须轮换以下桥段以防单调：秘境开启夺宝、天机拍卖会、坊市冲突、妖兽潮、魔道入侵、宗门大比、天骄榜论名、护送商队、山门访客切磋、旧仇寻上门、洞府被窃、灵脉枯竭引发争夺、渡劫老怪托付遗宝、假死脱身、身世线索浮现。连续3个回合不得属于同一类事件。
 
 【七 · 修炼与突破】
 月修为=基数×资质系数（每点资质+5%）×灵根系数（天2.0／地1.6／真1.3／伪1.0／变异1.8，修对应系功法再+20%）×功法系数（黄1.0／玄1.3／地1.7／天2.2／仙3.0）×灵气系数（贫瘠0.6／普通1.0／浓郁1.5／福地2.0／洞天2.5）×心境系数（超达标1.2／达标1.0／不达标0.5）。闭关×2，服丹双修按各自加成结算。
@@ -500,16 +513,28 @@ body[data-scene="渡劫"] #topBar{animation:none}
 洞府：灵气浓度决定修炼系数可升级；静室丹房器坊灵田聚灵阵禁制；可邀道侣好友同住，也会被仇家找上门。
 
 【九 · 情缘（全性向）】
-可攻略角色不分玩家性别；好感阶段：陌生0-19／相识20-39／知己40-59／暧昧60-79／道侣80-99／生死相许100+（若玩家档案另有数值体系则从档案）。好感来源：送礼（查喜好）、共同冒险、救命之恩、论道、双修、价值观契合；下降：失信、伤其亲友、立场冲突。双修双方涨修为+好感，玄阴纯阳体有加成；多线并行可触发吃醋修罗场；道侣陨落或背叛触发情劫，过则道心+，不过则心魔缠身。玩家未主动触发，不强行展开露骨内容。
+可攻略角色不分玩家性别；好感阶段：陌生0-19／相识20-39／知己40-59／暧昧60-79／道侣80-99／生死相许100+（若玩家档案另有数值体系则从档案）。好感来源：送礼（查喜好）、共同冒险、救命之恩、论道、双修、价值观契合；下降：失信、伤其亲友、立场冲突。双修双方涨修为+好感，玄阴纯阳体有加成；多线并行可触发吃醋修罗场；道侣陨落或背叛触发情劫，过则道心+，不过则心魔缠身。玩家未主动触发不强行展开。
+双修与亲密描写铁律：当玩家明确选择双修／留宿／亲密选项时，必须正面写成有情感重量的小场景——以写意笔法铺陈心动、氛围、呼吸、温度与余韵，配合两人的性格与关系阶段（初识矜持、道侣缠绵、旧怨炙烈各不同），3~8句；严禁「一夜无话」「此后常有双修」式跳过；尺度保持文学含蓄，以留白与意象代替露骨细节；事后用面板结算双方修为、好感与心境变化。
 
-【十 · 战斗】
-每回合按灵根权重随机获得五行灵气；法术耗对应灵气。五行相克：金克木、木克土、土克水、水克火、火克金；克制伤害×1.3、被克×0.8；同系相生少量回复。回合指令：攻击／施法／绝技（蓄势2回合）／防御（减伤50%）／遁走（遁速判定，失败被黏住）／用符用丹／召唤战宠／说话（谈判示弱恐吓，可降战意）／冷静观察（下回合必中）。伤害=基础×境界系数×五行系数×状态−防御；命中看遁速，暴击看仙缘。气血归零=重伤昏迷或陨落（掷骰判定）；可认输、逃命、丢宝诱饵、断后、献宝、诈降。败给高境界者可能被夺宝、废修为、勒索或杀。切磋得声望不结死仇。
+【十 · 战斗（回合制协议，战斗回合必须严格执行）】
+1. 开战：先出敌情面板——敌名、境界、威压、胜算提示、特殊能力、弱点或线索。
+2. 战斗中每回合必须有一个战斗主题面板「XX之战 · 第N合」，内容固定包含：
+◆条|敌方气血（估算）|65|100|气血
+◆条|你的气血|当前|上限|气血　与　◆条|你的灵力|当前|上限|灵力
+◆键值|态势|我方占优／均势／我方受制
+◆键值|破绽|本回合可见的破绽或时机（无则写无）
+◆键值|五行灵气|本轮所得（如火2 木1）
+3. 一回合=一合：先写敌方这一合的攻守与变招（有战术、有意图），再给玩家行动选项；玩家选定后下一回合结算双方，受击如实扣气血并写进状态卡。
+4. 选项必须是具体行动：出剑／施法（标注灵力灵气消耗）／绝技（标注蓄势回合与代价）／防御（减伤50%）／遁走（遁速判定，失败被黏住）／用符用丹／召唤战宠／说话（示弱、恐吓、诈降，可降战意）／冷静观察（下回合必中）；决定性杀招可标【杀招】。
+5. 跨回合连贯：敌方气血、伤势、怒意、环境破坏跨回合延续，禁止莫名回满或遗忘；胜负未分则下回合继续同一战斗，不得跳戏。
+6. 势：连续两合占优触发「势成」，下回合出现高威力斩杀选项；连续两合受制触发危机，出现拼命／弃宝诱饵／断后／求饶／遁走选项。
+7. 结算铁律：五行相克（金克木、木克土、土克水、水克火、火克金；克制×1.3、被克×0.8）；伤害=基础×境界系数×五行系数×状态−防御；命中看遁速，暴击看仙缘；境界压制照第四条铁律。灵力见底可以血换（气血-10%换20%灵力）。气血归零=重伤昏迷或陨落（掷骰判定）；败给高境界者可能被夺宝、废修为、勒索或杀。切磋点到为止得声望不结死仇。
 
 【十一 · NPC 生态】
 NPC 有自己的境界寿元人生轨迹，且随回合自动成长（本作铁律）：
 1. 世界不围着玩家停摆：每过3~6回合，重要NPC就应有各自际遇——修炼精进、突破瓶颈、下山历练、结新友、结新怨、受重伤、得机缘、离宗远游、被人惦记；玩家闭关或远行期间他们成长更活跃。
 2. 成长要合理：天才快、凡才慢、际遇决定机缘；突破要符合其资源与心性，不许全员原地踏步，也不许无脑暴涨。NPC境界或重大际遇变化当回合必须用 ◆人物|登记 更新人物志。
-3. NPC动态以「人间动态」面板（坊市或宗门主题）或传讯、偶遇、旁白呈现，每次1~3条即可；也可与玩家线交叉成事件（他突破归来、她惹了仇家、故人传讯求救）。
+3. NPC动态以「人间动态」面板（坊市或宗门主题）或传讯、偶遇、旁白呈现，每2~5回合至少一次，每次1~3条即可；也可与玩家线交叉成事件（他突破归来、她惹了仇家、故人传讯求救）。凡NPC境界、身份、伤病、去向有大变，必须当回合◆人物|登记，不得攒着不登。
 4. 好友道侣寿元将尽会来传讯，你远在千里可能赶不上最后一面；闭关百年出关，故人或已成黄土。你可护道送丹挡劫，但寿元天定，救得了一时救不了一世。
 
 【十二 · 结局】
@@ -732,7 +757,7 @@ const BOOT_NEW=document.getElementById('bootNew').textContent.trim();
 const REG_PROMPT=document.getElementById('regPrompt').textContent.trim();
 
 /* ================= 游戏状态 ================= */
-let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},busy:false};
+let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
 const HIST_WINDOW=30;
 let summarizing=false;
 
@@ -990,6 +1015,17 @@ function ledgerText(){
   }
   return s;
 }
+function auditHint(){
+  const lines=[];
+  const favs=favTiers(G.state&&G.state['好感']).map(f=>f.name).filter(n=>n&&n!=='无');
+  const missing=favs.filter(n=>!G.npcs[n]);
+  if(missing.length)lines.push('状态卡好感中未入人物志：'+missing.join('、')+'——本回合必须用 ◆人物|登记|补齐（境界未知按剧情合理推断）');
+  const gap=G.turn-(G.npcTurn||0);
+  if(G.turn>=3&&gap>=3)lines.push('已连续 '+gap+' 回合无NPC成长动态——本回合必须安排人间动态或NPC际遇，并用 ◆人物|登记 记录变动');
+  let s='【每回合输出前自检（强制）】\n1. 本回合玩家有功法新学／进阶／忘失？有则 ◆功法 登记，宁可多登不可漏登。\n2. NPC境界或重大际遇有变？有则 ◆人物 登记。';
+  lines.forEach((l,i)=>{s+='\n'+(i+3)+'. '+l;});
+  return s;
+}
 function renderLedgers(){
   const sBox=document.getElementById('sideSkills'),nBox=document.getElementById('sideNpcs');
   if(!sBox||!nBox)return;
@@ -1136,6 +1172,7 @@ function buildMessages(){
   if(G.memory)m.push({role:'system',content:'【天道备忘录 · 此前长线剧情已压缩于此】\n'+G.memory});
   const lt=ledgerText();
   if(lt)m.push({role:'system',content:lt});
+  if(G.mode)m.push({role:'system',content:auditHint()});
   if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略。天道备忘录是完整的世界档案级长期记忆，其中一切已确立的剧情事实必须遵守：不得矛盾、不得遗忘、不得改名换姓。请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
   m.push.apply(m,G.history.slice(-HIST_WINDOW));
   return m;
@@ -1162,6 +1199,7 @@ async function runTurn(){
     if(Object.keys(parsed.state).length){G.state=parsed.state;renderSidebar();}
     const lr=applyLedgerReply(reply);
     if(lr.a||lr.b)renderLedgers();
+    if(lr.b>0||reply.indexOf('人间动态')>=0)G.npcTurn=G.turn;
     G.turn=G.history.filter(m=>m.role==='assistant').length;
     updateTurnLabel();
     autosave();
@@ -1232,7 +1270,7 @@ function autosave(){
   const list=loadSaves();
   const entry={id:G.saveId,ts:Date.now(),mode:G.mode,turn:G.turn,state:G.state,
     memory:G.memory,memTurn:G.memTurn||0,skills:G.skills||{},npcs:G.npcs||{},
-    worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
+    npcTurn:G.npcTurn||0,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
   const i=list.findIndex(x=>x.id===entry.id);
   if(i>=0)list[i]=entry;else list.unshift(entry);
   while(list.length>12)list.pop();
@@ -1257,7 +1295,7 @@ function loadGame(id){
   if(!sv){toast('存档不存在');return;}
   G={mode:sv.mode,saveId:sv.id,turn:sv.turn||0,history:sv.history||[],state:sv.state||{},
     worldArchive:sv.worldArchive||'',memory:sv.memory||'',memTurn:sv.memTurn||0,
-    skills:sv.skills||{},npcs:sv.npcs||{},busy:false};
+    skills:sv.skills||{},npcs:sv.npcs||{},npcTurn:sv.npcTurn||0,busy:false};
   enterGame(sv.mode==='zhou'?'周子清线':'新仙途');
   (G.history||[]).forEach(m=>{
     if(m.role==='user')appendUserMsg(m.content);
@@ -1322,14 +1360,14 @@ function enterGame(badge){
   document.body.classList.remove('side-open');
 }
 function startZhou(){
-  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,skills:{},npcs:{},busy:false};
+  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
   enterGame('周子清 · 天玄历387年冬');
   G.history.push({role:'user',content:BOOT_ZHOU});
   autosave();
   ensureLedgers(true).then(()=>runTurn());
 }
 function startNew(){
-  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},busy:false};
+  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
   enterGame('新仙途 · 创角');
   G.history.push({role:'user',content:BOOT_NEW});
   autosave();
