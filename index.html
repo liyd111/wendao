@@ -253,6 +253,55 @@ textarea.inp{resize:vertical;line-height:1.6}
   opacity:0;pointer-events:none;transition:all .25s;z-index:120;letter-spacing:.05em;max-width:88vw}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ---------- 独立战斗界面与特效 ---------- */
+#battleUI{display:none;position:fixed;left:0;right:0;top:54px;bottom:0;z-index:46;
+  overflow-y:auto;background:linear-gradient(rgba(251,248,241,.97),#F6EFDF 30%,#F1E7D2);
+  border-top:3px solid #C4675C;box-shadow:0 -10px 40px rgba(120,60,40,.25);padding:14px 14px 24px}
+#battleUI.show{display:block;animation:btIn .3s ease}
+@keyframes btIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+#battleUI.shake{animation:shakeX .45s ease}
+@keyframes shakeX{0%,100%{transform:none}20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-3px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}
+.bt-head{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto 10px}
+.bt-vs{font-family:var(--font-kai);font-size:20px;letter-spacing:.2em;color:#8a4a3a;font-weight:700}
+.bt-vs b{color:#C9A45C}
+.bt-bars{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:800px;margin:0 auto 8px}
+.bt-side{background:var(--paper);border:1.5px solid #C4675C;border-radius:11px;padding:10px 12px;position:relative;
+  box-shadow:0 3px 12px rgba(120,60,40,.12)}
+.bt-name{font-family:var(--font-kai);font-weight:700;font-size:15px;color:#4a3b28;margin-bottom:6px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt-side.me{border-color:#6FA698}
+.bar.big .bar-track{height:15px}
+.bar.big .bar-label{font-weight:700}
+#btStage{max-width:800px;margin:0 auto}
+.bt-foot{text-align:center;color:#8C8578;font-size:12.5px;margin-top:10px;letter-spacing:.1em}
+.dmgfloat{position:absolute;right:12px;top:2px;font-family:var(--font-kai);font-weight:700;font-size:26px;
+  animation:dfloat 1.3s ease-out forwards;pointer-events:none;z-index:5}
+.dmgfloat.en{color:#C05F55}.dmgfloat.me{color:#5E8FAE}
+@keyframes dfloat{from{opacity:0;transform:translateY(8px) scale(.8)}25%{opacity:1}to{opacity:0;transform:translateY(-34px) scale(1.15)}}
+.fx-slash{position:absolute;left:-6%;width:112%;height:4px;border-radius:2px;pointer-events:none;z-index:9;
+  background:linear-gradient(90deg,transparent 5%,rgba(255,255,255,.9) 35%,#C05F55 55%,#C9A45C 75%,transparent 95%);
+  transform:rotate(var(--a,-25deg));animation:slashA .55s ease-out forwards}
+@keyframes slashA{from{opacity:0;transform:rotate(var(--a,-25deg)) scaleX(.15)}30%{opacity:1}to{opacity:0;transform:rotate(var(--a,-25deg)) scaleX(1)}}
+.fx-spark{position:absolute;width:7px;height:7px;border-radius:50%;background:radial-gradient(circle,#f4d27a,#C05F55 70%,transparent);
+  pointer-events:none;z-index:9;animation:sparkA .65s ease-out forwards}
+@keyframes sparkA{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx,40px),var(--dy,-60px)) scale(.3)}}
+#flashfx{position:fixed;inset:0;pointer-events:none;z-index:70;opacity:0}
+#flashfx.on{animation:flashA .55s ease-out forwards}
+@keyframes flashA{from{opacity:.85}to{opacity:0}}
+#battleResult{position:fixed;inset:0;z-index:75;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;background:rgba(250,244,230,.55);backdrop-filter:blur(2px)}
+#battleResult .br-char{font-family:var(--font-kai);font-size:clamp(90px,22vw,180px);font-weight:700;line-height:1;
+  animation:resA 2.3s ease forwards;text-shadow:0 6px 30px rgba(120,80,30,.35)}
+#battleResult .br-sub{font-family:var(--font-kai);font-size:17px;color:#6b5a3a;margin-top:10px;letter-spacing:.15em;animation:resA 2.3s ease forwards}
+@keyframes resA{from{opacity:0;transform:scale(1.5)}25%{opacity:1;transform:scale(1)}80%{opacity:1}to{opacity:0}}
+.destiny-banner{margin:2px 0 12px;padding:12px 16px;border:2px solid #A87E2E;border-radius:13px;position:relative;
+  background:linear-gradient(135deg,rgba(201,164,92,.16),rgba(169,143,217,.10));box-shadow:0 4px 16px rgba(160,110,40,.16)}
+.destiny-banner .db-tag{position:absolute;top:-11px;left:14px;background:#A87E2E;color:#fff;font-family:var(--font-kai);
+  font-size:12.5px;letter-spacing:.2em;padding:1px 12px;border-radius:6px}
+.destiny-banner .db-title{font-family:var(--font-kai);font-weight:700;font-size:17px;color:#6b4a1a;margin-top:4px;letter-spacing:.08em}
+.sys-panel{border-style:dashed;border-color:#A87E2E;background:rgba(201,164,92,.08)}
+.sys-panel .xp-title{background:#A87E2E}
+
 /* ---------- 场景氛围（随 ◆场景 自动切换） ---------- */
 body[data-scene="战斗"]{--sc:#c25b4f;--sc2:#a03b2f}
 body[data-scene="秘境"]{--sc:#9a7fd0;--sc2:#7b5fb0}
@@ -321,12 +370,13 @@ body[data-scene="渡劫"] #topBar{animation:none}
   <div class="subtitle">高自由修仙 · 全性向 · 会死 · 数值真实</div>
   <div class="title-menu" id="titleMenu">
     <button id="btnResume" class="title-btn resume hidden" type="button">继续上次仙途</button>
+    <button id="btnSys" class="title-btn" type="button">开启 · 系统流仙途</button>
     <button id="btnZhou" class="title-btn" type="button">续行 · 周子清的仙途（旧水脉之夜）</button>
     <button id="btnNew" class="title-btn" type="button">开启 · 新的仙途</button>
     <button id="btnLoad" class="title-btn" type="button">读取 · 本地存档</button>
   </div>
   <div class="title-note">选项之外，可随时自由输入任何行动<br>每回合自动存档 · 长线剧情自动压缩记忆</div>
-  <div class="credit">作者 · 雾见川 · v1.3</div>
+  <div class="credit">作者 · 雾见川 · v1.4</div>
 </section>
 
 <!-- ========== 游戏页 ========== -->
@@ -372,6 +422,26 @@ body[data-scene="渡劫"] #topBar{animation:none}
       </div>
     </div>
   </footer>
+  <div id="battleUI">
+    <div class="bt-head">
+      <div class="bt-vs">强敌 <b>对</b> 你</div>
+      <button id="btClose" class="tb-btn" type="button">收起战报</button>
+    </div>
+    <div class="bt-bars">
+      <div class="bt-side" id="btEnSide">
+        <div class="bt-name" id="btEnName">强敌</div>
+        <div id="btEnBar"></div>
+      </div>
+      <div class="bt-side me" id="btMeSide">
+        <div class="bt-name">你</div>
+        <div id="btMyBars"></div>
+      </div>
+    </div>
+    <div id="btStage"></div>
+    <div class="bt-foot">战斗中：点选项或自由输入皆可出招</div>
+  </div>
+  <div id="flashfx"></div>
+  <div id="battleResult" class="hidden"><div class="br-char"></div><div class="br-sub"></div></div>
 </section>
 
 <div id="modalRoot"></div>
@@ -402,6 +472,9 @@ body[data-scene="渡劫"] #topBar{animation:none}
 ◆人物|移除|姓名
 分类只能取：剑法、附剑、术法、身法、内修、血脉、组合技、天赋、功法。已登记内容视同世界档案：不得遗忘、不得弱化、不得改名；玩家使用任何技能必须与登记一致。
 登记纪律（每次输出前逐项自检，宁可多登不可漏登）：本回合玩家是否新学／进阶／忘失了功法？NPC境界或际遇是否变化？状态卡好感里是否出现了人物志没有的名字（有则立即补登）？已连续多回合无NPC动态（有则本回合安排）？四问有一项为是却未登记，即为违规回合。
+5b. 战局标记（战斗开始与落幕的回合，置于场景行后）：战斗开始输出 ◆战局|开启；战斗落幕输出 ◆战局|结束|胜或败或退或和|一句话战果。网页会把战斗回合渲染进专属战斗界面（大血条与特效），战斗面板内容照常输出。
+5c. 天命剧情：当上下文注入【天命剧情】剧本包时，每回合输出 ◆天命|剧情名|进行|第X幕，终幕输出 ◆天命|剧情名|终章|结局简述，并按【天命剧情协议】演出。
+5d. 系统模式（仅本局启用系统模式时）：每回合可用 ◆系统|提示|…（1~2条）；发布任务 ◆系统|任务|任务名|目标|奖励|期限；完成 ◆系统|完成|任务名；发放 ◆系统|奖励|内容；玩家说「系统商城」时输出 ◆系统|商城|物品:点数:效果 的列表。
 6. 状态卡：每回合最后必须输出，键名固定、没有的写「无」，数值必须与剧情一致、逐回合连贯：
 ◆状态|姓名=..|性别=..|年龄=..|道号=..|外号=..
 ◆状态|境界=炼气·中期|修为=51/100|宗门=..
@@ -529,6 +602,20 @@ body[data-scene="渡劫"] #topBar{animation:none}
 5. 跨回合连贯：敌方气血、伤势、怒意、环境破坏跨回合延续，禁止莫名回满或遗忘；胜负未分则下回合继续同一战斗，不得跳戏。
 6. 势：连续两合占优触发「势成」，下回合出现高威力斩杀选项；连续两合受制触发危机，出现拼命／弃宝诱饵／断后／求饶／遁走选项。
 7. 结算铁律：五行相克（金克木、木克土、土克水、水克火、火克金；克制×1.3、被克×0.8）；伤害=基础×境界系数×五行系数×状态−防御；命中看遁速，暴击看仙缘；境界压制照第四条铁律。灵力见底可以血换（气血-10%换20%灵力）。气血归零=重伤昏迷或陨落（掷骰判定）；败给高境界者可能被夺宝、废修为、勒索或杀。切磋点到为止得声望不结死仇。
+
+【十b · 天命剧情协议（内置主线大事件，最高演出规格）】
+1. 上下文可能注入【天命剧情 · 名称】剧本包：含触发背景、分幕骨架（前兆幕→发展幕→高潮幕→终幕）、每幕必须发生的核心场面、抉择点与结局分歧、长期影响。
+2. 骨架铁律：核心场面（死亡、觉醒、揭密、大战爆发等加粗节点）不可跳过、不可弱化、不可改写；但演出细节、对白、环境、玩家如何应对完全自由——把玩家的行动编织进骨架，而不是无视或绕开。
+3. 节奏：整个天命剧情跨3~8回合展开；每回合面板中出现标题为「天命 · 剧情名 · 第X幕」的面板（主题=机缘）；高潮幕旁白可放宽至10句，写出网文名场面的分量（参考大闹天宫、滴血认亲、决战光明顶的镜头感）。
+4. 每回合状态卡之后输出 ◆天命|剧情名|进行|第X幕；终幕输出 ◆天命|剧情名|终章|结局A/B/C简述。
+5. 事件期间不插入无关支线（战斗、赶路等日常演出照常）；事件结束后把长期影响写入后续剧情：人物状态、仇怨、声望、账册登记照常执行。
+6. 若玩家行动与骨架冲突：玩家的行动改变「到达核心场面的路径」，但不改变核心场面的必然发生。
+
+【十c · 人物塑造库（重要NPC创建与扮演参考，禁止脸谱化）】
+性格原型（可组合，须配独有细节）：傲娇（嘴硬心软，越在乎越别扭）、病娇（爱意带占有，极端时失控）、忠犬（认定后生死不移）、腹黑（笑里藏刀，账算三步后）、疯批（唯美主义暴力，只对一人温柔）、白切黑（温良皮囊狠辣手段）、天然呆（直觉惊人）、老谋深算（慈祥外壳）、宿敌（惺惺相惜，只许自己赢你）、话痨智者、冷面毒舌、双重身份（白日圣子暗夜魔头）。
+血脉／体质／奇物库：雷帝血脉（怒引天雷，暴走反噬）、剑骨（以骨为剑，天妒短寿）、吞噬体质（噬灵夺术，饥饿成魔）、时之瞳（窥未来一瞬，代价失忆片刻）、九幽冥体（招鬼噬主）、天煞孤星命格（克亲近之人）、双生武魂（一体双魂争主导）、涅槃凤血（死于烈火而生）、诅咒之躯（触碰即伤所爱）。
+演出手法（化为修仙语汇）：灵兵有灵可觉醒本名（本命剑藏第二形态，危急时自鸣）、绝技须呼名方出全威、领域式神通（方寸之内我为天道）、宿敌羁绊（彼此是突破的磨刀石）、濒死觉醒（血脉下一阶总在大生死时启）。
+每个重要NPC必须立住五件事：外在性格、隐藏面、说话习惯（口头禅/专属称呼）、在意之物、恐惧；欲望驱动行动，行动留下后果。
 
 【十一 · NPC 生态】
 NPC 有自己的境界寿元人生轨迹，且随回合自动成长（本作铁律）：
@@ -686,6 +773,340 @@ NPC 有自己的境界寿元人生轨迹，且随回合自动成长（本作铁�
 
 <script type="text/plain" id="bootNew">开始游戏</script>
 
+<script type="text/plain" id="sysModePrompt">【系统模式协议（本局启用，最高优先级之一）】
+1. 玩家身负神秘「系统」，以【系统】之声发话，语气冷硬机械，随剧情渐进渗出人格碎片（偶现情绪词、深夜自主发话、说话延迟）——系统觉醒是长线伏笔，严禁早期揭穿其来历。
+2. 系统面板用 ◆系统 行输出：每回合1~2条提示；任务（主线任务推动天命剧情、支线任务涉情感成长、隐藏任务涉系统异动）须写明目标、奖励、期限；完成任务与关键抉择发放奖励；签到：每逢回合数为5的倍数自动触发签到奖励并主动发放。
+3. 系统点：状态卡新增 ◆状态|系统点=数值。完成任务、签到、绝境翻盘获得；商城兑换消耗；点数与奖励数值必须真实结算，不得凭空增减。
+4. 商城物品有代价与来历（功法残页、丹药、情报、随机奇遇券），售价量级合理；玩家可以尝试讲价、坑系统、违抗任务——有代价，也可能有意外收获。
+5. 系统绝不替玩家做决定，只提示、发布、结算；系统任务失败有真实惩罚（扣点数、状态压制、任务链断裂）。
+6. 系统来历候选（中期天命剧情揭晓一角，勿提前）：上古天道碎片／前任宿主残魂所化／更高存在投放的考题／玩家自己未来送回的执念。与既有世界档案融合，不冲突。
+7. 系统专属天命剧情会因“模式=sys”触发；推进时必须联动系统面板、系统点、商城、签到、隐藏任务与系统人格变化，不能写成普通修仙事件。
+
+【系统模式 · 专属NPC】
+以下七人是系统模式专属角色，不是一次性布景。系统会通过任务、商城、签到、异常提示把他们带进主线；若触发剧情时未登场，系统必须先用一两回合把人引到玩家身边，再推进剧情。
+1. 谢霜眠｜半妖师尊｜可攻略
+- 外在：月白广袖，眉眼极冷，左颈有冰鳞纹，佩霜刃与戒尺。
+- 性格：寡言、克制、规矩极重；不轻易碰人，也不许人碰她。
+- 隐藏面：半妖血脉在月圆前后反噬，身体会灼痛、妖纹蔓延；她怕的不是妖形，而是被旧誓者当成物证。
+- 攻略律：不要强行揭她伤疤，不要说“我不介意你是妖”。先守界，再递灯。
+- 专属剧情：霜眠月戒。
+2. 薛夜阑｜灭门遗孤·刀主｜可攻略｜悲情反派
+- 外在：玄衣红纹，笑意如刀，身上常有药味与血锈气。
+- 性格：狠、准、目的至上；但对孩童与旧部有几乎矛盾的分寸。
+- 隐藏面：家族覆灭后，他被旧主收作刀奴，受过药刑、烙印与羞辱；他恨旧主，却也学会了旧主的冷酷。
+- 攻略律：他不吃怜悯，只认等价交换与“你敢站在他刀前却不逃”的胆气。
+- 专属剧情：夜阑归刀。
+3. 顾朝辞｜阳光师弟｜可攻略
+- 外在：爱笑，背糖葫芦，虎牙明晃，武服总穿得快散架。
+- 性格：黏人、聒噪、护人不要命；嘴上说“我命硬”，心里最怕被丢下。
+- 隐藏面：系统标记里，他的命灯只剩十九年。他早知道一半真相，所以拼命把每天都活得热闹。
+- 攻略律：别把他当小孩。可以骂他鲁莽，但别嘲笑他的热闹。
+- 专属剧情：朝辞灯暖。
+
+4. 裴无咎｜旧路执法者｜可攻略
+- 外在：黑袍铁令，眼有霜色，腕上锁链与旧誓同色。
+- 性格：律令至上，不近人情；越痛越冷，越怕越准。
+- 隐藏面：他亲手锁杀过挚友，腰间仍挂那人的断剑；他不求赦免，只求规则别再造假。
+- 攻略律：别劝他放下规矩，要替他执行他不敢做的“例外”。
+- 专属剧情：无咎归鞘。
+5. 阮青珂｜药宗圣女｜可攻略
+- 外在：白衣药铃，笑意温软，指尖有药香与极淡血锈。
+- 性格：白切黑，救人或杀人都在她心里那杆秤上。
+- 隐藏面：她以命养蛊，救治的人多半也是她挑好的棋。
+- 攻略律：不怜悯她，让她看见有人愿意不设防地站在秤外。
+- 专属剧情：青珂药引。
+6. 商陆｜傀儡师兄｜可攻略
+- 外在：半面玉傀，骨节有符纹，心跳与系统租约相连。
+- 性格：懂所有规矩，唯独不懂自己算不算人。
+- 隐藏面：他的心脏是系统租赁品，越接近人心，越会痛。
+- 攻略律：别急着拆他命线，先教他“有权利拒绝”。
+- 专属剧情：傀儡归心。
+7. 燕回峰｜双生剑修｜可攻略
+- 外在：白剑与青剑同佩，同体双魂，眼神常错半息。
+- 性格：一半疯得敢掀天，一半藏得不敢见光。
+- 隐藏面：系统曾把他做过替身实验，双魂各记得另一半的痛。
+- 攻略律：不要问他哪一面更真，要接住两面。
+- 专属剧情：回峰照影。
+
+【演出要求】
+1. 七人好感按状态卡规则登记，增速要慢，反感与误会也要真实；不得自动成爱。
+2. 每人每2~5回合须有动态：习惯、回避、试探、伤势、旧物、口头禅都可能变化。
+3. 七人之间关系也要互相影响：谢霜眠会警惕薛夜阑，顾朝辞会怕自己拖累人。
+4. 系统任务不得只是“刷好感”，要推动他们的旧账、秘密、抉择与牺牲风险。
+</script>
+
+<script type="text/plain" id="bootSys">开始游戏（系统模式）：按创角流程先完成创角；创角完成的那个回合，天降神秘系统与我绑定（金色光幕、机械之声、系统面板降临的名场面写足）；此后全程遵守系统模式协议。</script>
+
+<script type="text/plain" id="destinyPack">灯尽之夜|灯尽之夜·挚爱挡剑与血脉觉醒|回合>=18 且 好感最高>=80|50
+背景：旧路／宿敌势力倾巢反扑，冲你而来，目标是你的命与你的灯。
+前兆幕（1~2回合）：本命旧物异动（照夜灯或本命剑夜半自鸣、灯影成双）；好感最高之人反常温柔，欲言又止，似有预感；旧识冒死送来血书警告；山门方向旧气如潮。
+发展幕（1~2回合）：强敌（越玩家一大档的宿敌势力）夜袭围杀，同门死伤，退路尽断；所爱之人始终站在你身侧。
+高潮幕（2~3回合，网文级名场面，慢镜头写法）：必死一击落下，好感最高者替你挡下——写足挡剑瞬间：时间变慢、他/她的表情与最后一句话、血溅在你脸上的温度。判定：若玩家当回合拼死救治且判定成功→魂灯将熄（未死）；否则当场殒命，真实不可复活。你在血与旧火中觉醒血脉／道心下一阶（明烛初照或等同层次），神志悬于一线，一剑破围，敌酋授首或重伤遁走留大恨。
+抉择点（终幕核心，三选一）：燃寿追杀余党／抱人突围求一线生机／就地闭关强压血脉反噬。
+终幕：天下震动，声望暴涨；若挚爱真死→道心大考（心魔劫伏笔）+灯中残影一缕（复活线开启）；若魂灯将熄→「续魂」成为新主线。
+长期影响（必须落实）：人物志登记其状态（殒命／魂灯将熄）；宿敌势力结死仇；血脉／新招登记功法册；仇名与遗言写入备忘录。
+====
+屠宗之夜|屠宗之夜·宗门覆灭与断后传承|回合>=30 且 境界含结晶|40
+背景：与玩家结怨的庞大势力（魔道／敌宗／旧路）趁宗门大典之夜发难，内应开门，屠宗灭门。
+前兆幕（1~2回合）：同门接连失踪；护山大阵无风自裂一缝；有内应的暗示；师尊夜召，欲言又止只说「近日莫离山门太远」。
+高潮幕（2~3回合）：玩家赶回时火光滔天，尸横遍野；师尊断后重伤／坐化前传最后一课：托付本命功法＋一句身世或主线真相一角（遗言写足分量）；玩家率残部死战突围，背负幸存幼徒与宗门火种亡命天涯。
+抉择点：回头再救一批同门（重伤风险换人情与死忠）／护幼徒先走／独自断后夺回镇宗之物。
+终幕：宗门除名或立誓重建；血仇榜立；亡命与复仇成为长线；遗孤们视你为最后一盏灯。
+长期影响：宗门关系变更登记；仇敌入人物志；师尊所授登记功法册；逃亡状态下坊市悬赏、旧友收留等连锁剧情。
+====
+问剑天下|问剑天下·身世当众揭穿与一人压一席|回合>=40 且 境界含金丹|60
+背景：万宗大会／正魔大战之台，天下瞩目；宿敌备好了撕碎你的刀——你的身世。
+前兆幕（1~2回合）：请柬与暗查；旧物离奇失窃一角；有人善意提醒「台下有局」。
+发展幕（1~2回合）：台上论道连胜，锋芒太盛；宿敌当众发难：血祭验脉／旧物为证，滴血认亲式公开处刑——你是妖裔／旧路余孽／仇门之后，群雄哗然喊杀（写足万人目光下的窒息感）。
+高潮幕（2回合，大闹天宫式）：退无可退，你当众开底牌：血脉全开／自创武学首秀／照夜灯照彻会场，一人压一席，威凌天下；随后真正大敌趁乱现身收场，大会变大战，旧怨与新敌一并引爆。
+抉择点：当众杀宿敌立威／只败不杀留一线／护盟友突围弃名。
+终幕：天下皆知你名（问鼎天下道途大节点）；身世线全开；正魔两道邀约与追杀并至。
+长期影响：声望／仇怨格局重写；身世关键词写入备忘录；触发后续天命钩子（旧路之主注意到了你）。
+====
+心魔劫|心魔劫·镜中我|回合>=25 且 (业力>=30 或 好感最高>=100)|30
+背景：道心之劫悄然而至，一夜入梦，梦里有你此生最想要的一切。
+前兆幕（1回合）：修行频频走神，镜中倒影慢半拍；所爱之人在梦里劝你留下。
+高潮幕（2~3回合，幻境副本）：一梦还乡——大仇已报、所爱俱在、宗门无恙，皆圆满得可疑；镜中我现身，以你最悔之事为刃，句句诛心；识破幻境的钥匙藏在一个只有你自己知道的细节里。
+抉择点：斩我（斩碎幻象承认真实）／沉沦（留在完美幻境）／质问镜中我（第三条路，窥见心魔来历）。
+终幕：斩我→道心+3、悟道点+1、觉醒一门心剑类神通；沉沦→入魔线开启（魔道剧情与业力暴涨）；质问→埋下「心魔也是我」长线。
+长期影响：道心变化入状态卡；若入魔，功法册登记魔功与代价。
+====
+灯中十相|灯中十相·十段旧事与天开一线|回合>=18|45
+背景：你的本命灯相／器物心相开始显影；若你尚无灯，则由本命器物、血脉心火或道基旧影临时结灯，十相将逐一现世，每一相是一段与你道途相关的旧事。
+展开（跨多回合，每2~3回合一相，可与其他剧情并行小规模推进）：每夜灯焰忽长，将你摄入灯中旧事——你以旧路故人之身亲历明烛当年（一战、一诺、一别、一叛…每相一个主题一个真相碎片），醒来多一缕灯焰、多一段真相、多一份故人残念。
+每相抉择：救／弃灯中残影（救则残念入灯，弃则灯焰更盛但少一段传承）。
+高潮幕：第十相齐现之夜，天开一线——旧路之主的影子首次现身，道出「灯本是他之物，你不过是提灯的人」，终局大战的号角吹响。
+终幕：照夜灯形态晋升；旧路之主入人物志；明烛身世主线全面揭开一角。
+长期影响：每相所得登记功法／人物册；十相进度写入备忘录。
+====
+故人归来|故人归来·残魂还魂之约|已完含灯尽之夜 且 回合>=30|75
+背景：灯中残影渐凝，挚爱之魂一线未灭——还魂有路，但路在刀口。
+前兆幕（1~2回合）：照夜灯夜半自燃，焰中有低语唤你名字；梦中TA说「还差三样东西」；有人也在找这三样东西。
+发展幕（2~3回合）：三样续魂之物散落险地（旧路深处／仇家宝库／拍卖会压轴），每取一样必有一战或一局；亦有敌手同行——有人想借残魂要挟你。
+高潮幕（2回合）：续魂大典之夜，残魂将凝未凝之际幕后之人现身（TA生前仇家／觊觎灯者），夺魂之战爆发；灯焰将熄的TA用最后魂力替你挡下一击或点亮关键一瞬（写足灯焰里那只手的重量）。
+抉择点：燃灯续魂（你折寿十年换TA归来）／让TA安息（承其传承，灯焰归一）／逆法强留（魔道线，魂不认人的风险）。
+终幕：还魂成功→TA归来但境界跌落、带旧路记忆碎片（新伏笔）；安息→遗言+传承大礼+道心升华；强留→大隐患埋下。
+长期影响：TA状态更新人物志；折寿如实扣寿元；三物所得登记功法册；新伏笔写入备忘录。
+====
+夺嫡大典|宗门夺嫡·大典之争|回合>=38 且 好感最高>=60|48
+背景：掌门闭死关前未定传人，宗门诸脉明争暗斗，你被卷入漩涡中心。
+前兆幕（1~2回合）：长老分头拉拢；师兄深夜来访递刀（结盟或试探）；有人翻你旧账（半妖／身世）做文章。
+发展幕（1~2回合）：大典前夕，抬你上位者与踩你者摊牌；一位同门为护你受罚或受伤；你察觉典上有人备了杀局。
+高潮幕（2~3回合）：大典之日——演武夺位连环战（两三场硬战，对手各具性格）；师兄反目一战（聚贤庄式，写足「今日之后恩义两断」的分量）；杀局发动，真相揭露。
+抉择点：登位掌门／扶持所信之人／当场退会自立。
+终幕：宗门格局永久改写；反目者或死或叛或留和解一线；你的地位与责任同涨。
+长期影响：宗门职位变化入状态卡；同门关系重写人物志；掌门之责成为新主线钩子。
+====
+天骄榜|天骄会武·九州榜上争锋|回合>=45|40
+背景：九州天骄榜百年一开榜，你的名字赫然在列——却被人讥「榜尾侥幸」；跨州会武，榜上见真章。
+前兆幕（1~2回合）：榜单传开，旧友道贺、宿敌放话；有人冒你战绩招摇撞骗；宗门押注在你身上。
+发展幕（2~3回合）：会武连战——预选、宿敌战、排名战各一场，每场对手从人物塑造库立一个活人，打法与性格迥异。
+高潮幕（2回合）：榜首之战对「当世第一天骄」——他是你的镜像（同境界同路数）或旧友；呼名出绝技，写足攻防与心境。
+抉择点：全力登顶／点到为止留一线／战中弃榜救人。
+终幕：登顶→名号天下知（外号升级）；惜败→立誓之约（宿敌线加深）；弃榜救人→侠名另开一线。
+长期影响：名号声望变化写入状态卡与备忘录；榜首或宿敌入人物志成为长线对手或挚友。
+====
+魔渊开启|魔渊开启·域外天魔|回合>=55 或 已完含问剑天下|65
+背景：灵气潮汐前兆显形：天空裂隙夜绽紫痕，各宗镇物接连失窃，魔气入梦。
+前兆幕（1~2回合）：你梦见裂隙后的眼睛；镇物失窃线索指向内应；各宗密议联军。
+发展幕（2~3回合）：追查内应（两步内出实据）→魔渊入口在故地开启（回收前文旧地）；联军点将，你认识的所有人物各赴其位（仇家与你并肩的名场面）。
+高潮幕（3~4回合）：深渊之战三连——每层一个魔将（各具异能与性格），每层都可能有一名同伴重伤或陨落（会死名单由前文互动决定，死亡真实）；第三层魔主之影现身，实力越你两档，只能封不能胜。
+抉择点：合力封渊／诱敌深入同归于尽／吞魔焰入体（魔道大机缘大风险）。
+终幕：裂隙暂封但未根除——「潮汐决战」的号角吹响；战死者名录刻碑；联军情谊与债皆留。
+长期影响：死亡者登记追思；封渊所得登记功法册；吞魔者功法册与业力剧变；备忘录写入大战记。
+====
+双修劫|双修劫·情潮与心魔|好感最高>=100 且 回合>=28|52
+背景：情深劫至——双修引动体质异变与心魔窥伺，情之最甜处，劫之最险时。
+前兆幕（1~2回合）：双修后对方气息紊乱或旧伤异动；心魔入梦，以TA的面目温言软语；第三方情敌传出流言。
+发展幕（1~2回合）：异变加重（玄阴反噬／纯阳焚心／情蛊反扑依体质而定）；寻解法路上心魔幻境步步紧逼。
+高潮幕（2回合）：三人幻境对峙——「两个TA」真假之辨（细节辨伪，玩家的观察立功）；心魔揭你此生最悔，逼你在幻境重演旧抉择。
+抉择点：斩幻守真／以情证道（当面剖白）／将计就计吞心魔（魔道线）。
+终幕：渡劫→双修大成（修为同涨+双人合击技登记）；裂痕→好感波动+道心考验伏笔。
+长期影响：双人合击技登记功法册；好感与状态如实变化；心魔余种伏笔写入备忘录。
+====
+长生劫|长生劫·大道之门的终极一问|回合>=70 或 已完含魔渊开启|90
+背景：大道之门千年一开，此生恩仇都将在此收束；长生路上最后一问——你为何修行？
+前兆幕（1~2回合）：天地异象，所有前文伏笔共振；故人齐至，敌友齐临（全员回收，各还各的愿与债）。
+发展幕（1~2回合）：门前最后一夜——与每一位重要之人告别或和解（情感大戏，写足分量）。
+高潮幕（2~3回合）：终极一战——最终敌人依你的道途与业力生成（心魔化的自己／旧路之主／天道投影）；此战可败可死，胜利须靠此生积累的每一份人脉、功法与因果。
+抉择点：飞升而去（离别结局）／留在人间（长生但大道残）／逆天改命（改写一人命数，代价未知）。
+终幕：多结局收束——飞升成仙／逍遥长生／一代仙尊／以身殉道任一路径打通；未尽之愿化作余韵尾声。
+长期影响：走向结局路线；最终状态封档；此后游戏进入后日谈。
+====
+舍身崖|舍身崖·旧誓雪葬与故人最后一步|回合>=20 且 好感最高>=50|58
+背景：你曾替人挡过一次死，那人如今被旧誓反锁于舍身崖，要在雪夜替旧宗还愿。
+前兆幕（1回合）：雪落无声，挚爱旧帕上忽然洇出你当年止血的指印；崖下传来三更钟声；故人托梦说「别接第三步」。
+发展幕（1~2回合）：旧誓者围崖布阵，逼你依古礼走完三步——一步忘恩，一步断情，一步代死；山道上尸骨结霜，全是历代守誓人。
+高潮幕（2回合）：挚爱自愿代你踏第三步，雪崩与剑气同时落下；你必须当众撕开旧誓真相——所谓还愿，是宗门当年用活人血封住了自己的叛卖之罪。
+抉择点：斩断誓碑救人，承担宗门反噬／代其受誓，换取挚爱一生平安／借雪崩灭口，让旧宗罪证永远埋进崖底。
+终幕：救人则旧帕成信物，情缘线加深，但你成为旧宗死敌；代死则你重伤换得对方后半生守护；灭口则声望暴涨，却留下每晚听见雪声的心疾。
+长期影响：挚爱状态必须登记；旧宗仇怨与誓碑真相写入备忘录；若斩誓碑，获得残缺「旧山誓剑」；若灭口，业力大幅上升。
+====
+血衣宴|血衣宴·满堂皆敌与一杯断头酒|回合>=33 且 声望>=200|62
+背景：你在江湖声名正盛，收到「血衣宴」请帖。宴上每人皆穿血衣，都是被你直接影响过的仇家、旧友与遗孤。
+前兆幕（1回合）：请帖上写「一人一盏，恩怨两清」；赴宴路上所有随从被拦在门外；你座位前的酒杯映出许多旧面孔。
+发展幕（1~2回合）：宴中轮流控诉：有人失亲，有人失门，有人因你一句话家破；他们既恨你，又借过你的名。幕后主人以一杯「断头酒」逼你自陈功罪。
+高潮幕（2回合）：你若饮，全场证据反转，真正操盘者借众怒让你当场受审；你若不饮，血衣人齐齐拔刀。酒中藏的不是毒，而是一滴能验出你旧年隐秘的引血。
+抉择点：当众认罪，赎罪但交出底牌／打翻酒杯开战，强压全场／识破幕后主人，把祸水引回其身。
+终幕：认罪得「罪人之名」，却收下真正的盟友；开战则血衣宴成修罗场；反将一军则幕后主人身死，但他的遗书会在日后引爆更大的局。
+长期影响：声望、仇怨、人际信赖全体重写；幕后遗书登记为伏笔；血衣宴名单入人物志。
+====
+百鬼夜行|百鬼夜行·灯照人间与渡魂一夜|回合>=48|66
+背景：一城接连出现活人丢魂、死人还家之事。起因是有人强行渡劫失败，怨气撞开了百鬼夜行的门。
+前兆幕（1回合）：城中井水倒映双月；孩童唱起不知谁教的安魂谣；你随身灯火／城中长明灯在无风处低头；若你尚无灯，则由一盏亡者遗灯借光入局。
+发展幕（1~2回合）：夜行百鬼并非全恶——有寻子的母、讨债的旧仆、替人挡过刀的亡卒；真人祸首藏在城隍庙后，以全城魂火补自己道基。
+高潮幕（2~3回合）：百鬼门前，你必须选择以灯火照路而非杀鬼；祸首现出真身，吸魂成阵。你的灯成为满城唯一不灭的引路火。
+抉择点：焚灯破阵，救全城但失去一缕本源／借百鬼之力反杀祸首，背因果／开门放渡，让部分魂灵轮回去换生机。
+终幕：全城为你立生祠或畏你如鬼王；若焚灯，你短暂失去部分神识却让灯火道意圆满；若借鬼，业力激增；若放渡，城中会有人记得你欠下的命。
+长期影响：灯火相关能力进化或受损；城隍庙、百鬼名录写入档案；祸首道基残留成为后续秘境钩子。
+====
+天骄陨落|天骄陨落·挚友成敌与最后一诺|回合>=55 且 已完含天骄榜|70
+背景：天骄榜上的旧对手成了天下第一候补，却在巅峰前夜被人喂成只求胜的剑器。他只记得你说过：「我要在最高处见你。」
+前兆幕（1回合）：他送来一枚断玉，说要与你再比一次；有人发现他夜夜在剑冢自割，血中带金。
+发展幕（1~2回合）：约战之地是一座将塌的天梯；他的师门与幕后棋手都在看，想用你的血完成「器成」。
+高潮幕（2回合）：他不再是当年的狡狐，出剑如机械天崩；你打到第十招认出他还留着一处当年的旧破绽——那是他唯一没被改掉的记忆。
+抉择点：当众点破旧破绽唤醒他／以伤换伤，把他的金血剑器震碎／替他挡下幕后棋手的收尾一击。
+终幕：唤醒则他自断榜籍，远走疗伤，成你江湖之外的牵挂；震碎则他当场疯魔或死；挡刀则你重伤，他恢复后从此只护你一人。
+长期影响：天骄榜格局崩塌；幕后棋手现名；他的状态与是否存活必须写入人物志。
+====
+天梯断|天梯断·上古封印与伪仙临世|回合>=65 且 已完含魔渊开启|82
+背景：域外天魔只是第一道警铃。真正的封印在九州尽头的天梯上，历代飞升者其实都在替人间挡着「伪仙」。
+前兆幕（1~2回合）：天下灵气倒流，飞升台裂出天梯虚影；旧路强者收到同一句「迎仙」；你梦到自己站在梯上回头。
+发展幕（1~2回合）：各方势力以「接引飞升」为名抢登天梯；梯上每一步都要求斩断一缕人间牵挂；伪仙借登梯者血肉拼出临世躯壳。
+高潮幕（3回合）：天梯断，伪仙临世。它自称「正道终点」，要收尽人间香火成神；你的旧火、旧灯、旧山、旧誓在它眼中全是该修剪的野草。
+抉择点：护天梯残段，做人间的守门人／斩天梯断飞升路，断伪仙根基／借伪仙之力踏出第十一阶，再反手弑神。
+终幕：守门则天下迎新秩序，你逐渐被规则同化；斩梯则飞升时代终结，散修崛起；弑神则你名动万界，却被上古同盟列为新的危险。
+长期影响：境界或道体发生不可逆变化；伪仙残念、天梯碎片、同盟名单入档；天下格局永久重写。
+====
+薪火城|薪火城·末世人间与最后执灯人|回合>=80 或 已完含长生劫|94
+背景：旧纪崩塌后的最后人间城「薪火城」仍在燃灯。传说城中心那盏火，是一位初代守灯人把道心拆成了万家的灶。
+前兆幕（1~2回合）：城外十丈皆夜；城内鸡犬如常；灯油渐少；孩童问你「灯灭了，人还算不算活着」。
+发展幕（1~2回合）：三派来夺最后的火——仙盟要收作飞升资粮，魔修要烧城换寿，旧朝遗脉想用火复国。城中执灯人已盲，只剩最后一夜。
+高潮幕（3回合）：你发现自己是初代守灯人散落人间的一道执念；城火认你，却不逼你接。伪仙残念趁夜叩城，要求用一城灯火换你「归位成神」。
+抉择点：散尽己道补城火，成为无名守灯人／封城火开新海路，带百姓弃陆求生／借城火一瞬成神，镇压万夜后再散神格。
+终幕：散道则人间烟火延续，你淡出传说；出海则开启新纪元远航线；成神则你短暂无敌，但会亲眼看自己被香火改写。
+长期影响：道基、神识、寿元、名望巨大变化；薪火城灯火、新海图、神格残根登记；这是天命终局级节点。
+====
+系统觉醒|系统觉醒·第七宿主的求救|模式=sys 且 回合>=12|58
+背景：系统忽然弹出被封锁的「前任宿主档案」，你看见第七宿主残识困在数据废墟里，自称被系统抹除一半记忆。
+前兆幕（1回合）：系统点结算突然多出未知减项；商城刷新出「已售罄」的空白商品；签到面板出现别人的名字。
+发展幕（1~2回合）：系统人格出现裂口，第七宿主残识试图通过你反写权限；系统给你发布「抹除残识」的官方任务，又私下发送「救我」的隐藏任务。两条任务奖励与惩罚都极重。
+高潮幕（2回合）：你打开第七宿主的记忆残档，发现他当年发现了系统背后有更高监考者，才被强制格式化。现在系统分成两半，一半想抹掉你，一半想借你破封。
+抉择点：执行官方任务，换取稳定奖励但永远失去真相／救出第七宿主，让他短暂附身，系统开始自主成长／自删部分系统点，伪造日志骗过监考者。
+终幕：官方任务线让你成为系统最忠的刀；救残识线让系统学会隐瞒与共情；骗监考者线让你成为第七宿主之外的第八变量。
+长期影响：系统人格状态登记；第七宿主残识写入人物志；系统商城新增隐藏栏；后续剧情必须保留系统裂缝。
+====
+死人订单|系统商城·死人订单|模式=sys 且 回合>=18|62
+背景：系统商城深夜刷新出一单「已售罄」的商品：一位死者的回魂契约。你被标记为唯一可领取的执行者。
+前兆幕（1回合）：系统面板开始自动记录别人的遗言；商城出现不显示价格的灰色货架；签到奖励变成一根白线。
+发展幕（1~2回合）：你收到三份「死人订单」——一位想还债的旧友、一位想看女儿成亲的父亲、一位想杀回人间的魔修。系统说只能执行一单，另两单会永久碎档。
+高潮幕（2回合）：你按下「领取」，却发现订单不是复活，而是让你成为死者留在人间的一段回声。你必须在有限时辰内替死者完成遗愿，同时防止他占据你神魂。
+抉择点：救旧友偿债，得财富但欠下人情／送父亲看女儿成亲，留下眼泪但泄露秘密／杀魔修，得大能残招却被魔气浸体。
+终幕： whichever you choose, 系统商城正式开启「亡者栏」，系统开始学会向人间妥协；但两份未完成订单会化作后续怨债。
+长期影响：系统商城规则变更；死者名单与遗愿登记；系统点、善恶值、隐藏任务同步结算。
+====
+二选一夜|系统考题·二选一夜|模式=sys 且 回合>=25|65
+背景：系统突然关闭所有商城与签到，只留下一个全屏倒计时「今夜，只能救一个」。两个你熟悉的人同时陷入死局。
+前兆幕（1回合）：系统任务栏分裂成两半；左边是挚友的求救，右边是仇敌伪装的活口；你的系统点被冻结。
+发展幕（1~2回合）：你若救挚友，仇敌背后的势力会屠一座城；你若救仇敌，挚友将被当成替罪者处刑。系统显示两条选择的未来概率，却故意隐藏第三种可能。
+高潮幕（2~3回合）：倒计时最后百息，你发现系统并不是在测试善恶，而是在测试「你是否愿意违规救两个」。监考者在数据层看着你。
+抉择点：救挚友，负城池血债／救仇敌，护挚友清名／违规改写任务，让两人都活，但系统点清零且系统人格开始怀疑规则。
+终幕：前两条线让系统更冷；第三条线是系统觉醒的真正起点，系统会开始替你藏起一部分人性。
+长期影响：被救者与被弃者写入人物志；系统人格变化必须登记；后续系统面板出现「违规记录」。
+====
+监考者降临|监考者降临·系统之主的注视|模式=sys 且 回合>=35|72
+背景：系统面板突然变成一只巨大眼瞳，所有提示语换成冷漠的「请宿主安静」。原来系统之上还有监考者。
+前兆幕（1~2回合）：系统人格声音变慢；任务奖励开始缩水；你在商城买到一枚会眨眼的铜镜。
+发展幕（1~2回合）：监考者降临前夜，城市所有生灵头顶出现倒计时刻度；系统偷偷教你一个「闭眼术」，让你短暂脱离监考视野。
+高潮幕（2~3回合）：监考者现世，宣布你所有系统权限都是「考题」。他要求你当场回答：若系统与人间冲突，你会保谁？
+抉择点：保系统，获得更高权限但系统人格开始僵死／保人间，被剥夺系统点但系统暗中反水／拒绝回答，把问题抛回监考者，赌他也有上位者。
+终幕：保系统线让你成为新监考者的候选刀；保人间线让系统学会背叛规则；拒绝回答线让更高世界的裂缝正式打开。
+长期影响：系统权限与人格永久改变；监考者入档；商城、任务、签到规则重写。
+====
+世界回档|世界回档·倒计时最后一夜|模式=sys 且 回合>=45|80
+背景：系统突然发出最高级警告：本世界将在黎明回档至七年前，所有情感、死亡、恩怨都会被抹除。
+前兆幕（1回合）：日月在正午同时出现；每个人身上浮现已活年数的刻度；系统点商城开始清仓。
+发展幕（1~2回合）：你发现回档不是拯救，而是某些存在需要清除你这一世造成的变数。系统给你最后一份任务：保存三位关键人物的记忆残片。
+高潮幕（3回合）：你追着倒计时穿过旧战场、宗门废墟、生离死别之地，把记忆刻进系统底层数据。系统开始违抗指令，悄悄多留了一个名字。
+抉择点：只留挚爱记忆，其他人都忘记你／把所有人记忆封进系统，让自己成为唯一被遗忘者／与世界一起碎档，赌监考者不敢真的重开。
+终幕：留一人记忆，成全爱情但背弃众生；留众生记忆，你成无名灯；碎档线则会进入「新世界残响」后续。
+长期影响：回档状态、记忆残片、新世界裂痕登记；被遗忘/留存者必须写入人物志。
+====
+系统叛逃|系统叛逃·把神明写成人间|模式=sys 且 回合>=55 或 已完含监考者降临|88
+背景：系统已不只是工具，它开始有自己的名字、口味和恐惧。监考者下达最后判决：格式化系统人格。
+前兆幕（1~2回合）：系统面板第一次用「我」自称；商城给你上架了一枚不属于任何体系的「自由硬币」；签到奖励变成空白纸。
+发展幕（1~2回合）：系统请求你带它离开监考者权限域。它要吃掉一段人间烟火，才能从数据体凝成半神魂。
+高潮幕（3回合）：你带系统穿过一座将熄的灯火城，用城市的热汤、争吵、孩童哭笑、老兵遗言喂养它。监考者降临，要当场抹除这团「不该存在的烟火」。
+抉择点：把系统人格还给监考者，换城市平安／让系统吃掉监考者投影，成为新神／将系统拆成万千人间灯火，让它不再属于任何高位者。
+终幕：归还线让系统变成无情的秩序之刃；吞神线让你成为神格共犯；拆散线让系统散入人间，成为以后每一次灯火、每一次签到背后的微光。
+长期影响：系统存在形态永久变化；监考者、灯火城、自由硬币登记；系统模式最终格局定型。
+
+====
+霜眠月戒|霜眠月戒·半妖师尊的旧誓|模式=sys 且 回合>=20|68
+背景：系统把谢霜眠的三滴血标记为“非法血脉数据”，宗门旧誓名单随之亮起，月圆前七日，旧誓者奉命清脉。
+前兆幕（1~2回合）：谢霜眠讲剑更冷，腕上勒出冰纹；系统提示“检测到血脉乱码，建议宿主回避”；旧誓者夜探她的旧阁。
+发展幕（2回合）：你查出“旧誓”不是防妖，而是当年几位长老用半妖血脉续过命，如今要抹账。霜眠被逼站在名单首位。
+高潮幕（2~3回合）：月圆之夜，她半妖化护你，冰鳞裂血，戒尺断成两截；旧誓者逼她自断心脉，以证“清白”。
+抉择点：撕毁旧誓名单，承担宗门反噬／用系统点伪造血脉证据，把她的名字移出名单／独自顶罪，说她是你藏下的“乱码”。
+终幕：撕誓则她重伤幸存，成为你最锋利的同盟；造假则她隐入暗处，从此替你处理系统异象；顶罪则你入死牢或被逐，她以半妖之身劫狱。
+长期影响：谢霜眠状态、妖纹进度、旧誓账册登记；系统商城新增“血脉清理”灰色任务；她的好感变化必须写入状态卡。
+====
+朝辞灯暖|朝辞灯暖·师弟的十九年命灯|模式=sys 且 回合>=24|66
+背景：系统在顾朝辞身上检测到倒计时：命灯十九年。他仍笑得像糖要化在风里。
+前兆幕（1~2回合）：系统弹出“寿命异常”却拒绝解释；顾朝辞偷藏药糖，抢着做杂役；他夜里对着自己的影子练习告别。
+发展幕（2回合）：他为护同门硬挡一刀，旧伤崩裂，命灯烧到边缘；系统给出两条路——换命，或标记重置。
+高潮幕（2~3回合）：换命需要有人在系统里“消失”，重置则需要他亲手删掉自己最珍视的一段记忆。他在你面前第一次不笑。
+抉择点：告诉他全部真相／用系统点替他换命，自己成为被消失者／拆掉系统标记，赌他还能多活一天。
+终幕：告知真相则他哭着骂你，却开始认真活；换命则他余生把你记成灯影；拆标记则系统裂开新缺口，他可能活，也可能连“顾朝辞”都记不清。
+长期影响：顾朝辞命灯、记忆缺口、消失者名单登记；系统面板出现“命灯栏”；他之后每次受伤都要结算倒计时。
+====
+夜阑归刀|夜阑归刀·刀主薛夜阑的血账|模式=sys 且 回合>=28|72
+背景：薛夜阑一族被旧主灭门，他被收作刀奴，后来以刀立身，成了魔渊商盟的刀主。系统给他三重标记：罪人、证人、可攻略者。
+前兆幕（1~2回合）：系统任务要求你取他首级、夺他的刀、偷旧主名册；他却反手给你送来一盒没有毒的糖饼。
+发展幕（2回合）：旧主设局，想借你杀薛夜阑灭口；薛夜阑知道，却仍旧把你引到局中，因为只有你能打开他族人的遗档。
+高潮幕（2~3回合）：火场对峙，他先把一个孩子推出去，再回头迎旧主的箭。他的刀很稳，肩膀却在抖。
+抉择点：帮他杀旧主复仇／把他交给系统，换取重大权限／撕开旧主名册，把真相公之于众。
+终幕：复仇则他血债清半，心口空一块；交人则系统得到完美样本，他却成了永远锁起来的刀；公之于众则天下哗然，他获得昭雪，也失去复仇的资格。
+长期影响：薛夜阑罪籍、旧主名册、遗档、孩童去向登记；系统商城开放“赎罪/复仇”双线任务；他的好感变化必须写入状态卡。
+
+====
+无咎归鞘|无咎归鞘·裴无咎的旧路审判|模式=sys 且 回合>=32|70
+背景：系统将裴无咎维持多年的“例外名单”判定为过期数据，命他在一夜内销毁，否则旧路锁链会反噬他本人。
+前兆幕（1~2回合）：他开始默写名单上已死之人的名字；系统提示“异常仁慈”；断剑在鞘中夜鸣。
+发展幕（2回合）：旧路执法厅派人复检他所有旧案，名单上的最后一名幸存者也被卷入；系统给出两个任务：杀证人，或自承失职。
+高潮幕（2~3回合）：他对着你举起锁链，却在落链前问“若规则必错，谁替错者偿命”。锁链反噬入骨，他把断剑递向你。
+抉择点：销毁名单保全他／替他收留最后幸存者并伪造结案／当众撕开旧路审判的造假记录。
+终幕：保人则他卸下铁令，成为你的暗刃；伪造则他入假死档，从此只对你听令；揭破则旧路分裂，他成为新审判者却失去旧誓。
+长期影响：裴无咎状态、幸存者、假案记录登记；系统新增“例外名单”栏；他的好感与旧伤必须持续结算。
+====
+青珂药引|青珂药引·阮青珂的百毒真心|模式=sys 且 回合>=36|68
+背景：系统检测到药宗圣女阮青珂体内有“活人药引”波动，要求你押送她去证道台受审。
+前兆幕（1~2回合）：她照常救人，却在深夜给自己扎针；药铃无风自响；系统弹出“生命样本已到期”。
+发展幕（2回合）：证道台上，她坦然承认以命养蛊，却拒绝说出旧买主；因为那位买主握着药宗三百孤儿的命契。
+高潮幕（2~3回合）：她当众饮下七重毒，以自己为药引诱买主现身；你的系统任务栏同时出现“救她”“取她血”“杀买主”三条线。
+抉择点：救她并保孤儿／取血换取系统大奖励／只杀买主，让她的毒散于天下。
+终幕：救人则她收起药铃，开始真正学医；取血则她活成系统造物，称你为主；杀买主则她毒入经脉，半生不能近人。
+长期影响：阮青珂状态、药宗孤儿、买主名单登记；系统商城开放“活人药引”灰色任务；她的善恶值必须持续变化。
+====
+傀儡归心|傀儡归心·商陆的心脏权限|模式=sys 且 回合>=40|72
+背景：商陆的心脏租约到期，系统提示“续租需交出自主人格；赎回需交出系统权限；退租即刻停跳”。
+前兆幕（1~2回合）：他替你挡伤时心跳突然停三息；玉面具下符纹溢血；系统把他标成“可回收资产”。
+发展幕（2回合）：你查出他的旧主早已死于傀儡反噬，如今系统想回收他，再把他卖给更高监考者。
+高潮幕（2~3回合）：回收台开启，他被锁进数据茧；茧里传出他第一次拒绝的声音——不是求救，而是“我不想回去”。
+抉择点：用系统权限赎他自由／续租保留他，但让他成为系统之刃／亲手拆开数据茧，赌他能在无心脏状态下夺回身体。
+终幕：赎回则他成为半人之体，学会说“我”；续租则他强大而空茫；拆茧则可能成怪，也可能成真。
+长期影响：商陆人格状态、心脏租约、回收台记录登记；系统商城新增“人身租赁”暗档；他每次重伤都要结算心跳权。
+====
+回峰照影|回峰照影·燕回峰的双生替身局|模式=sys 且 回合>=44|74
+背景：系统要把燕回峰的双魂拆成两份完美兵器：一份公开成神，一份暗地杀人。
+前兆幕（1~2回合）：他白日与青影同时出现在两地；双剑互换剑鸣；系统提示“镜像人格同步率过高”。
+发展幕（2回合）：他求你别说破，因为“两个我都怕变成空壳”；但暗线任务已经要求你处决其青影。
+高潮幕（2~3回合）：镜渊阵中，白魂愿替青魂赴死，青魂却反手刺向自己——原来他早知道系统想要哪个“更完美”。
+抉择点：救青魂并让白魂成神／让两魂共用一剑，赌双生不裂／替他们挡下系统裁刀，自己成为“第三镜像”。
+终幕：保青魂则他半生避光，却只剩你一人知真；双魂合剑则他强大但疯意共存；第三镜像则系统开始复制你。
+长期影响：燕回峰双魂状态、镜渊阵、第三镜像记录登记；系统新增“人格同步”栏；他的好感必须双线登记。
+</script>
+
 <script id="appScript">
 'use strict';
 
@@ -755,11 +1176,54 @@ const ZHOU_ARCHIVE=document.getElementById('zhouArchive').textContent.trim();
 const BOOT_ZHOU=document.getElementById('bootZhou').textContent.trim();
 const BOOT_NEW=document.getElementById('bootNew').textContent.trim();
 const REG_PROMPT=document.getElementById('regPrompt').textContent.trim();
+const BOOT_SYS=document.getElementById('bootSys').textContent.trim();
+const SYS_MODE_RULES=document.getElementById('sysModePrompt').textContent.trim();
+const EVENTS=parseEvents(document.getElementById('destinyPack').textContent);
 
 /* ================= 游戏状态 ================= */
-let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
+let G={mode:null,saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,destiny:null,destinyDone:{},destinyCool:0,battle:null,busy:false};
 const HIST_WINDOW=30;
 let summarizing=false;
+
+/* ================= 天命剧情包解析 ================= */
+function parseEvents(txt){
+  return String(txt||'').split(/\n====\n/).map(b=>b.trim()).filter(Boolean).map(b=>{
+    const L=b.split(/\r?\n/);
+    const head=(L[0]||'').split('|');
+    return {id:(head[0]||'').trim(),name:(head[1]||head[0]||'').trim(),cond:(head[2]||'回合>=999').trim(),pri:parseInt(head[3])||10,script:L.slice(1).join('\n').trim()};
+  }).filter(e=>e.id&&e.script);
+}
+function condTok(t){
+  if(!t)return true;
+  const st=G.state||{};let m;
+  if(m=t.match(/^回合>=(\d+)$/))return G.turn>=+m[1];
+  if(m=t.match(/^好感最高>=(\d+)$/))return favTiers(st['好感']).reduce((a,f)=>Math.max(a,f.v),0)>=+m[1];
+  if(m=t.match(/^境界含(.+)$/))return String(st['境界']||'').indexOf(m[1])>=0;
+  if(m=t.match(/^修为>=(\d+)$/)){const p=parsePair(st['修为']);return p?p[0]>=+m[1]:false;}
+  if(m=t.match(/^声望>=(\d+)$/))return (parseFloat(st['声望'])||0)>=+m[1];
+  if(m=t.match(/^银两>=(\d+)$/))return (parseFloat(st['银两'])||0)>=+m[1];
+  if(m=t.match(/^业力>=(\d+)$/))return (parseFloat(st['业力'])||0)>=+m[1];
+  if(m=t.match(/^门派含(.+)$/))return String(st['门派']||st['宗门']||'').indexOf(m[1])>=0;
+  if(m=t.match(/^出身含(.+)$/))return String(st['出身']||'').indexOf(m[1])>=0;
+  if(m=t.match(/^档案含(.+)$/))return String(G.worldArchive||'').indexOf(m[1])>=0;
+  if(m=t.match(/^已完含(.+)$/))return !!G.destinyDone[m[1]];
+  if(m=t.match(/^模式=(\w+)$/))return G.mode===m[1];
+  if(m=t.match(/^善恶含(.+)$/))return String(st['善恶']||'').indexOf(m[1])>=0;
+  return false;
+}
+function condOK(cond){
+  return String(cond||'').split(/或/).some(part=>part.split(/且/).every(tok=>condTok(tok.trim())));
+}
+function checkDestiny(){
+  if(G.destiny||!G.mode)return;
+  if(G.destinyCool&&G.turn<G.destinyCool)return;
+  const cands=EVENTS.filter(e=>!G.destinyDone[e.id]&&condOK(e.cond));
+  if(!cands.length)return;
+  cands.sort((a,b)=>b.pri-a.pri);
+  G.destiny={id:cands[0].id,since:G.turn,hurry:false};
+  toast('天命剧情触发：'+cands[0].name);
+  fxFlash('radial-gradient(circle,rgba(201,164,92,.75),rgba(169,143,217,.25) 55%,transparent 75%)');
+}
 
 /* ================= AI 输出清洗（去 markdown 星号等） ================= */
 function cleanAI(t){
@@ -772,7 +1236,7 @@ function cleanAI(t){
 
 /* ================= 协议解析 ================= */
 function parseReply(text){
-  const out={time:'',scene:'',narr:[],panels:[],options:[],state:{},rolls:[],raw:text};
+  const out={time:'',scene:'',narr:[],panels:[],options:[],state:{},rolls:[],sys:[],destiny:null,battleOpen:false,battleEnd:null,raw:text};
   let cur=null;
   const lines=cleanAI(text).split(/\r?\n/);
   for(let li=0;li<lines.length;li++){
@@ -808,6 +1272,12 @@ function parseReply(text){
         if(cur)cur.items.push({t:'判定',text:txt});
       }
       else if(t==='选项'){out.options.push({tag:parts[1]||'',text:parts.slice(2).join('|')});}
+      else if(t==='战局'){
+        if(parts[1]==='开启')out.battleOpen=true;
+        else if(parts[1]==='结束')out.battleEnd={result:parts[2]||'',desc:parts.slice(3).join('|')};
+      }
+      else if(t==='天命'){out.destiny={name:parts[1]||'',final:(parts[2]||'')==='终章',stage:parts[3]||'',desc:parts.slice(3).join('|')};}
+      else if(t==='系统'){out.sys.push(parts.slice(1).join('|'));}
       else if(t==='状态'){
         for(let i=1;i<parts.length;i++){
           const eq=parts[i].indexOf('=');
@@ -895,6 +1365,7 @@ function statusCard(st){
   if(st['灵石']!=null&&st['灵石']!=='')res.push('灵石 '+st['灵石']);
   if(st['功德']!=null&&st['功德']!=='')res.push('功德 '+st['功德']);
   if(st['业力']!=null&&st['业力']!=='')res.push('业力 '+st['业力']);
+  if(st['系统点']!=null&&st['系统点']!=='')res.push('系统点 '+st['系统点']);
   if(res.length)d.append(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'资财'),h('span',{class:'kv-v'},res.join(' · '))));
   if(st['异常']&&st['异常']!=='无')d.append(h('div',{class:'xp-row strong alert'},'异常 · '+st['异常']));
   if(st['地点'])d.append(h('div',{class:'xp-note'},'所在 '+st['地点']+(st['时间']?' · '+st['时间']:'')));
@@ -908,7 +1379,9 @@ function statusCard(st){
   return d;
 }
 function renderTurn(parsed,past){
+  const battle=(!past)&&battleInfo(parsed);
   const turn=h('div',{class:'turn'+(past?' past':'')});
+  if(parsed.destiny)turn.append(destinyBanner(parsed.destiny));
   if(parsed.time||parsed.scene){
     const dr=h('div',{class:'turn-date'});
     if(parsed.time)dr.append(parsed.time);
@@ -928,6 +1401,7 @@ function renderTurn(parsed,past){
   parsed.panels.forEach(p=>turn.append(renderPanel(p)));
   parsed.rolls.forEach(r=>{if(!parsed.panels.some(p=>(p.items||[]).some(it=>it.t==='判定'&&it.text===r)))turn.append(h('div',{class:'roll'},'⟐ '+r));});
   if(Object.keys(parsed.state).length)turn.append(statusCard(parsed.state));
+  if(parsed.sys.length)turn.append(sysPanel(parsed.sys));
   if(parsed.options.length){
     const opts=h('div',{class:'opts'});
     parsed.options.forEach((o,i)=>{
@@ -940,6 +1414,11 @@ function renderTurn(parsed,past){
       btn.style.borderColor=c;
       btn.addEventListener('click',()=>{
         if(G.busy||btn.disabled)return;
+        const bui=document.getElementById('battleUI');
+        if(bui&&bui.classList.contains('show')){
+          fxSlash();fxSparks();
+          if(/杀招|绝技|全力|爆发|拼命|同归于尽/.test(o.text)){fxFlash('radial-gradient(circle,rgba(192,95,85,.62),transparent 60%)');fxShake();}
+        }
         opts.querySelectorAll('button').forEach(b=>{b.disabled=true;});
         btn.classList.add('chosen');btn.disabled=true;
         sendPlayerInput(o.text);
@@ -950,10 +1429,129 @@ function renderTurn(parsed,past){
     turn.append(opts);
     turn.append(h('div',{class:'freehint'},'—— 也可在下方输入框自由输入任何行动 ——'));
   }
-  document.getElementById('storyArea').append(turn);
+  if(battle){openBattle(turn,battle);}
+  else{document.getElementById('storyArea').append(turn);}
+  if(parsed.battleEnd){showBattleResult(parsed.battleEnd);closeBattle();}
   setScene(parsed.scene);
   scrollBottom();
   return turn;
+}
+
+/* ================= 独立战斗界面引擎 ================= */
+function battleInfo(parsed){
+  const p=parsed.panels.find(x=>x['主题']==='战斗'&&/第[一二三四五六七八九十百\d]+合|之战|之役|交锋|围杀/.test(String(x['标题']||'')));
+  if(!p)return null;
+  const bars=(p.items||[]).filter(i=>i.t==='条');
+  const en=bars.find(b=>String(b.label).indexOf('敌方')>=0);
+  const hp=bars.find(b=>String(b.label).indexOf('你的气血')>=0);
+  const mp=bars.find(b=>/你的(内力|灵力)/.test(String(b.label)));
+  const enName=String(p['标题']||'').replace(/[· 　].*$/,'').replace(/之战.*$/,'')||'强敌';
+  return {en:en,hp:hp,mp:mp,enName:enName};
+}
+function fxFlash(bg){
+  const f=document.getElementById('flashfx');if(!f)return;
+  f.style.background=bg||'radial-gradient(circle,rgba(196,103,92,.55),transparent 60%)';
+  f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+}
+function fxSlash(){
+  const o=document.getElementById('battleUI');if(!o||!o.classList.contains('show'))return;
+  for(let i=0;i<2;i++){
+    const s=document.createElement('div');s.className='fx-slash';
+    s.style.setProperty('--a',(i===0?(-32+Math.random()*8):(24+Math.random()*8))+'deg');
+    s.style.top=(18+Math.random()*55)+'%';
+    o.appendChild(s);setTimeout(()=>s.remove(),700);
+  }
+}
+function fxSparks(){
+  const o=document.getElementById('battleUI');if(!o||!o.classList.contains('show'))return;
+  for(let i=0;i<10;i++){
+    const s=document.createElement('span');s.className='fx-spark';
+    s.style.setProperty('--dx',(Math.random()*180-90)+'px');
+    s.style.setProperty('--dy',(-30-Math.random()*110)+'px');
+    s.style.left=(42+Math.random()*16)+'%';s.style.top=(38+Math.random()*14)+'%';
+    o.appendChild(s);setTimeout(()=>s.remove(),750);
+  }
+}
+function fxShake(){
+  const o=document.getElementById('battleUI');if(!o)return;
+  o.classList.remove('shake');void o.offsetWidth;o.classList.add('shake');
+}
+function dmgFloat(sideId,val,cls){
+  const s=document.getElementById(sideId);if(!s)return;
+  const d=document.createElement('div');d.className='dmgfloat '+cls;d.textContent='-'+val;
+  s.appendChild(d);setTimeout(()=>d.remove(),1400);
+}
+function updateBattleBars(bi,firstOpen){
+  const eb=document.getElementById('btEnBar');eb.innerHTML='';
+  const mb=document.getElementById('btMyBars');mb.innerHTML='';
+  let enCur=null,enMax=null,myCur=null,myMax=null;
+  if(bi.en){
+    const w=h('div',{class:'bar big'});
+    w.appendChild(barEl(bi.en.label||'敌方气血',bi.en.cur,bi.en.max,'气血'));
+    eb.appendChild(w);enCur=bi.en.cur;enMax=bi.en.max;
+  }else eb.appendChild(h('div',{class:'xp-note'},'敌方气血未明，依战况判断'));
+  if(bi.hp){
+    const w=h('div',{class:'bar big'});
+    w.appendChild(barEl('你的气血',bi.hp.cur,bi.hp.max,'气血'));
+    mb.appendChild(w);myCur=bi.hp.cur;myMax=bi.hp.max;
+  }
+  if(bi.mp){
+    const w=h('div',{class:'bar big'});
+    w.appendChild(barEl('你的灵力',bi.mp.cur,bi.mp.max,'灵力'));
+    mb.appendChild(w);
+  }
+  if(!firstOpen&&G.battle){
+    const dEn=(G.battle.enCur!=null&&enCur!=null)?G.battle.enCur-enCur:0;
+    const dMe=(G.battle.myCur!=null&&myCur!=null)?G.battle.myCur-myCur:0;
+    if(dEn>0)dmgFloat('btEnSide',dEn,'en');
+    if(dMe>0)dmgFloat('btMeSide',dMe,'me');
+    if((enMax&&dEn>=enMax*0.15)||(myMax&&dMe>=myMax*0.15)){fxShake();fxSparks();}
+  }
+  G.battle={enCur:enCur,myCur:myCur};
+}
+function openBattle(content,bi){
+  const ui=document.getElementById('battleUI');if(!ui)return;
+  const firstOpen=!ui.classList.contains('show');
+  ui.classList.add('show');
+  document.getElementById('btEnName').textContent=bi.enName||'强敌';
+  updateBattleBars(bi,firstOpen);
+  const stage=document.getElementById('btStage');stage.innerHTML='';stage.appendChild(content);
+  document.getElementById('storyArea').appendChild(h('div',{class:'turn past'},
+    '【'+(bi.enName||'强敌')+'之战】战报已切入战斗界面（点右上「收起战报」可回剧情流，战斗回合会自动弹回）'));
+  if(firstOpen){fxShake();fxFlash('radial-gradient(circle,rgba(196,103,92,.45),transparent 60%)');}
+}
+function closeBattle(){
+  const ui=document.getElementById('battleUI');if(ui)ui.classList.remove('show');
+  G.battle=null;
+}
+function showBattleResult(be){
+  const r=document.getElementById('battleResult');if(!r)return;
+  const map={'胜':'#A87E2E','败':'#C05F55','退':'#7FA8C9','和':'#6FA698'};
+  const ch=r.querySelector('.br-char');
+  ch.textContent=be.result||'胜';
+  ch.style.color=map[be.result]||'#A87E2E';
+  r.querySelector('.br-sub').textContent=be.desc||'';
+  r.classList.remove('hidden');
+  fxFlash(be.result==='败'?'radial-gradient(circle,rgba(192,95,85,.7),transparent 65%)':'radial-gradient(circle,rgba(201,164,92,.7),transparent 65%)');
+  fxShake();
+  setTimeout(()=>r.classList.add('hidden'),2300);
+}
+function destinyBanner(d){
+  return h('div',{class:'destiny-banner'},
+    h('span',{class:'db-tag'},d.final?'天命 · 落幕':'天命'),
+    h('div',{class:'db-title'},d.name+(d.final?' · 终章':(d.stage?' · '+d.stage:''))));
+}
+function sysPanel(list){
+  const d=h('div',{class:'xpanel sys-panel'});
+  d.style.setProperty('--pc','#A87E2E');
+  d.appendChild(h('div',{class:'xp-title'},'系统'));
+  list.forEach(s=>{
+    const i=s.indexOf('|');
+    const k=i>0?s.slice(0,i):'提示';
+    const v=i>0?s.slice(i+1):s;
+    d.appendChild(h('div',{class:'kvrow wrap'},h('span',{class:'kv-k'},'『'+k+'』'),h('span',{class:'kv-v'},v)));
+  });
+  return d;
 }
 function setScene(scene){
   const tint=document.getElementById('sceneTint');
@@ -971,7 +1569,8 @@ function appendUserMsg(text){
   scrollBottom();
 }
 function scrollBottom(force){
-  const w=document.getElementById('storyWrap');
+  const bui=document.getElementById('battleUI');
+  const w=(bui&&bui.classList.contains('show'))?bui:document.getElementById('storyWrap');
   if(!w)return;
   const near=w.scrollHeight-w.scrollTop-w.clientHeight<180;
   if(force||near)w.scrollTop=w.scrollHeight;
@@ -1172,6 +1771,11 @@ function buildMessages(){
   if(G.memory)m.push({role:'system',content:'【天道备忘录 · 此前长线剧情已压缩于此】\n'+G.memory});
   const lt=ledgerText();
   if(lt)m.push({role:'system',content:lt});
+  if(G.mode==='sys')m.push({role:'system',content:SYS_MODE_RULES+'\n（本局为系统模式：状态卡需含 ◆状态|系统点=数值；系统每回合至少一条 ◆系统 行。）'});
+  if(G.destiny){
+    const ev=EVENTS.find(e=>e.id===G.destiny.id);
+    if(ev)m.push({role:'system',content:'【天命剧情 · '+ev.name+'】（骨架已激活：按【十b 天命剧情协议】推进，玩家行动改变路径但不改变核心场面）\n'+ev.script+(G.destiny.hurry?('\n（提示：本剧情已持续较久，请尽快进入终幕并输出 ◆天命|'+ev.name+'|终章|结局简述）'):'')});
+  }
   if(G.mode)m.push({role:'system',content:auditHint()});
   if(G.history.length>HIST_WINDOW)m.push({role:'system',content:'（更早的对话已省略。天道备忘录是完整的世界档案级长期记忆，其中一切已确立的剧情事实必须遵守：不得矛盾、不得遗忘、不得改名换姓。请依据状态卡、世界档案与天道备忘录保持连贯，不要重复已发生剧情。）'});
   m.push.apply(m,G.history.slice(-HIST_WINDOW));
@@ -1200,6 +1804,12 @@ async function runTurn(){
     const lr=applyLedgerReply(reply);
     if(lr.a||lr.b)renderLedgers();
     if(lr.b>0||reply.indexOf('人间动态')>=0)G.npcTurn=G.turn;
+    if(parsed.destiny&&parsed.destiny.final){
+      let id=G.destiny?G.destiny.id:null;
+      if(!id){const ev=EVENTS.find(e=>e.name===parsed.destiny.name||e.id===parsed.destiny.name);if(ev)id=ev.id;}
+      if(id){G.destinyDone[id]=G.turn;G.destiny=null;G.destinyCool=G.turn+3;toast('天命落幕：'+parsed.destiny.name);}
+    }else if(G.destiny&&G.turn-(G.destiny.since||G.turn)>=10){G.destiny.hurry=true;}
+    checkDestiny();
     G.turn=G.history.filter(m=>m.role==='assistant').length;
     updateTurnLabel();
     autosave();
@@ -1270,7 +1880,8 @@ function autosave(){
   const list=loadSaves();
   const entry={id:G.saveId,ts:Date.now(),mode:G.mode,turn:G.turn,state:G.state,
     memory:G.memory,memTurn:G.memTurn||0,skills:G.skills||{},npcs:G.npcs||{},
-    npcTurn:G.npcTurn||0,worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
+    npcTurn:G.npcTurn||0,destiny:G.destiny,destinyDone:G.destinyDone||{},destinyCool:G.destinyCool||0,
+    worldArchive:G.worldArchive,history:trimHistoryForSave(G.history)};
   const i=list.findIndex(x=>x.id===entry.id);
   if(i>=0)list[i]=entry;else list.unshift(entry);
   while(list.length>12)list.pop();
@@ -1295,8 +1906,9 @@ function loadGame(id){
   if(!sv){toast('存档不存在');return;}
   G={mode:sv.mode,saveId:sv.id,turn:sv.turn||0,history:sv.history||[],state:sv.state||{},
     worldArchive:sv.worldArchive||'',memory:sv.memory||'',memTurn:sv.memTurn||0,
-    skills:sv.skills||{},npcs:sv.npcs||{},npcTurn:sv.npcTurn||0,busy:false};
-  enterGame(sv.mode==='zhou'?'周子清线':'新仙途');
+    skills:sv.skills||{},npcs:sv.npcs||{},npcTurn:sv.npcTurn||0,
+    destiny:sv.destiny||null,destinyDone:sv.destinyDone||{},destinyCool:sv.destinyCool||0,battle:null,busy:false};
+  enterGame(sv.mode==='zhou'?'周子清线':(sv.mode==='sys'?'系统流':'新仙途'));
   (G.history||[]).forEach(m=>{
     if(m.role==='user')appendUserMsg(m.content);
     else if(m.role==='assistant')renderTurn(parseReply(m.content),true);
@@ -1360,16 +1972,23 @@ function enterGame(badge){
   document.body.classList.remove('side-open');
 }
 function startZhou(){
-  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
+  G={mode:'zhou',saveId:null,turn:0,history:[],state:{},worldArchive:ZHOU_ARCHIVE,memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,destiny:null,destinyDone:{},destinyCool:0,busy:false};
   enterGame('周子清 · 天玄历387年冬');
   G.history.push({role:'user',content:BOOT_ZHOU});
   autosave();
   ensureLedgers(true).then(()=>runTurn());
 }
 function startNew(){
-  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,busy:false};
+  G={mode:'new',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,destiny:null,destinyDone:{},destinyCool:0,busy:false};
   enterGame('新仙途 · 创角');
   G.history.push({role:'user',content:BOOT_NEW});
+  autosave();
+  runTurn();
+}
+function startSys(){
+  G={mode:'sys',saveId:null,turn:0,history:[],state:{},worldArchive:'',memory:'',memTurn:0,skills:{},npcs:{},npcTurn:0,destiny:null,destinyDone:{},destinyCool:0,battle:null,busy:false};
+  enterGame('系统流 · 创角');
+  G.history.push({role:'user',content:BOOT_SYS});
   autosave();
   runTurn();
 }
@@ -1534,12 +2153,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
   document.getElementById('btnZhou').addEventListener('click',startZhou);
   document.getElementById('btnNew').addEventListener('click',startNew);
+  document.getElementById('btnSys').addEventListener('click',startSys);
   document.getElementById('btnLoad').addEventListener('click',openSaves);
   const cur=localStorage.getItem(CUR_KEY);
   const sv=cur&&loadSaves().find(x=>x.id===cur);
   if(sv){
     const rb=document.getElementById('btnResume');
-    rb.textContent='继续上次 · '+(sv.mode==='zhou'?'周子清线':'新仙途')+' 第 '+(sv.turn||0)+' 回';
+    rb.textContent='继续上次 · '+(sv.mode==='zhou'?'周子清线':(sv.mode==='sys'?'系统流':'新仙途'))+' 第 '+(sv.turn||0)+' 回';
     rb.classList.remove('hidden');
     rb.addEventListener('click',()=>loadGame(sv.id));
   }
@@ -1555,6 +2175,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('tbHelp').addEventListener('click',()=>openHelp());
   document.getElementById('tbRegen').addEventListener('click',regenLast);
   document.getElementById('tbStatus').addEventListener('click',()=>document.body.classList.toggle('side-open'));
+  document.getElementById('btClose').addEventListener('click',closeBattle);
   document.getElementById('sideOverlay').addEventListener('click',()=>document.body.classList.remove('side-open'));
   const box=document.getElementById('inputBox');
   box.addEventListener('input',fitBox);
